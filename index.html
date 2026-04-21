@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<!-- ricoh_checklist_etraining.html -->
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ricoh Graphic Communications — Checklist e-Training</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f5f5f3;color:#1a1a18}
+.shell{max-width:700px;margin:0 auto;padding:1.5rem}
+.topbar{background:#1a3a5c;border-radius:10px;padding:1.1rem 1.4rem;margin-bottom:1.2rem;display:flex;gap:12px;align-items:center}
+.topbar h1{font-size:15px;font-weight:500;color:#fff}
+.topbar p{font-size:12px;color:#b5d4f4;margin-top:2px}
+.who-bar{border-radius:6px;padding:9px 14px;font-size:13px;margin-bottom:1rem;display:flex;align-items:center;gap:8px}
+.who-bar.com{background:#e6f1fb;color:#0c447c;border:0.5px solid #b5d4f4}
+.who-bar.sat{background:#eaf3de;color:#274d0e;border:0.5px solid #c0dd97}
+.who-bar.frm{background:#faeeda;color:#633806;border:0.5px solid #fac775}
+.card{background:#fff;border:0.5px solid #d9d9d5;border-radius:10px;padding:1.1rem 1.3rem;margin-bottom:1rem}
+.card-title{font-size:13px;font-weight:500;color:#1a1a18;padding-bottom:8px;margin-bottom:12px;border-bottom:0.5px solid #d9d9d5}
+.ro-card{background:#f5f5f3;border:0.5px solid #d9d9d5;border-radius:10px;padding:1rem 1.3rem;margin-bottom:1rem}
+.ro-badge{display:inline-block;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:500;margin-left:8px;background:#e6f1fb;color:#0c447c;vertical-align:middle}
+.ro-badge.sat{background:#eaf3de;color:#274d0e}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:11px;color:#5f5e5a;font-weight:500;text-transform:uppercase;letter-spacing:0.04em}
+.field input,.field select,.field textarea{padding:0 10px;border:0.5px solid #b4b2a9;border-radius:6px;font-size:13px;background:#fff;color:#1a1a18;outline:none;height:34px;font-family:Arial,sans-serif}
+.field textarea{height:70px;padding:8px 10px;resize:none}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:#185fa5;box-shadow:0 0 0 2px rgba(24,95,165,0.1)}
+.slabel{font-size:11px;font-weight:500;color:#5f5e5a;text-transform:uppercase;letter-spacing:0.05em;margin:12px 0 6px}
+.check-list{display:flex;flex-direction:column;gap:7px}
+.check-item{display:flex;align-items:flex-start;gap:9px;padding:8px 10px;border-radius:6px;background:#f5f5f3;cursor:pointer}
+.check-item:hover{background:#e6f1fb}
+.check-item input[type=checkbox]{width:15px;height:15px;margin-top:1px;accent-color:#1a3a5c;flex-shrink:0}
+.check-item span{font-size:13px;color:#1a1a18;line-height:1.4}
+.chk-icon{font-size:16px;flex-shrink:0;width:22px;text-align:center}
+.disclaimer-wrap{border:0.5px solid #b4b2a9;border-radius:6px;padding:10px 12px;background:#f5f5f3;margin-bottom:10px;display:flex;align-items:flex-start;gap:10px;cursor:pointer}
+.disclaimer-wrap:hover{background:#e6f1fb}
+.disclaimer-wrap input[type=checkbox]{width:15px;height:15px;margin-top:2px;accent-color:#1a3a5c;flex-shrink:0}
+.disclaimer-wrap span{font-size:13px;color:#1a1a18;line-height:1.6}
+.rrow{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;border-bottom:0.5px solid #d9d9d5}
+.rrow:last-child{border:none}
+.rrow span:first-child{color:#5f5e5a;flex-shrink:0;margin-right:8px}
+.rrow span:last-child{color:#1a1a18;font-weight:500;text-align:right}
+.btn-row{display:flex;justify-content:flex-end;gap:8px;margin-top:1.2rem}
+.btn{height:36px;padding:0 18px;border-radius:6px;font-size:13px;cursor:pointer;border:0.5px solid #b4b2a9;background:#fff;color:#1a1a18;font-family:Arial,sans-serif}
+.btn:hover{background:#f5f5f3}
+.btn.primary{background:#1a3a5c;color:#fff;border-color:#1a3a5c}
+.btn.primary:hover{background:#152e4a}
+.img-drop{border:1.5px dashed #b4b2a9;border-radius:6px;height:80px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:5px;cursor:pointer;color:#888780;font-size:13px}
+.img-drop:hover{border-color:#185fa5;color:#185fa5;background:#e6f1fb}
+.final-ok{padding:16px;background:#eaf3de;border-radius:6px;font-size:13px;color:#274d0e;text-align:center;margin-top:1rem;display:none}
+.chk-done{font-size:12px;color:#1a1a18;padding:3px 0;border-bottom:0.5px solid #d9d9d5}
+.info-hint{font-size:11px;color:#5f5e5a;margin-top:4px;line-height:1.5}
+</style>
+</head>
+<body>
+<div class="shell">
+<div class="topbar">
+  <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect width="28" height="28" rx="6" fill="#ffffff22"/><rect x="4" y="9" width="20" height="12" rx="2" stroke="#fff" stroke-width="1.4"/><path d="M8 9V7a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2" stroke="#fff" stroke-width="1.3"/><circle cx="21" cy="14" r="1" fill="#fff"/><rect x="8" y="16" width="12" height="5" rx="1" fill="#ffffff33" stroke="#fff" stroke-width="1"/></svg>
+  <div><h1>Ricoh Graphic Communications — Checklist e-Training</h1><p id="bar-sub">Paso 1 de 3 · Responsable Comercial</p></div>
+</div>
+
+<!-- PASO 1: COMERCIAL -->
+<div id="view-comercial">
+  <div class="who-bar com">📋 Cumplimentar por <strong>responsable Comercial</strong></div>
+
+  <div class="card">
+    <div class="card-title">Datos Contacto Comercial / Distribuidor</div>
+    <div class="grid2">
+      <div class="field"><label>Nombre</label><input id="c-nombre" type="text"></div>
+      <div class="field"><label>Empresa</label><input id="c-empresa" type="text"></div>
+      <div class="field"><label>Teléfono</label><input id="c-tel" type="tel"></div>
+      <div class="field"><label>E-mail</label><input id="c-email" type="email"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Datos Contacto Cliente</div>
+    <div class="grid2">
+      <div class="field"><label>Empresa</label><input id="cl-empresa" type="text"></div>
+      <div class="field"><label>Dirección</label><input id="cl-dir" type="text"></div>
+      <div class="field"><label>Teléfono</label><input id="cl-tel" type="tel"></div>
+      <div class="field"><label>E-mail</label><input id="cl-email" type="email"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Configuración del equipo</div>
+    <div class="grid3">
+      <div class="field"><label>Account Number</label><input id="eq-acc" type="text"></div>
+      <div class="field"><label>Nº Pedido Oracle</label><input id="eq-oracle" type="text"></div>
+      <div class="field"><label>Nº Pedido Siebel</label><input id="eq-siebel" type="text"></div>
+    </div>
+    <div class="grid2" style="margin-top:10px">
+      <div class="field"><label>Modelo</label>
+        <select id="eq-modelo">
+          <option value="">Seleccionar modelo...</option>
+          <option>Pro8400</option><option>Pro8410</option><option>Pro8420</option>
+          <option>ProC5300S</option><option>ProC5310S</option><option>ProC5400</option>
+          <option>ProC5400SL</option><option>ProC5410</option><option>ProC7200</option>
+          <option>ProC7200E</option><option>ProC7200S</option><option>ProC7200SL</option>
+          <option>ProC7200X</option><option>ProC7210</option><option>ProC7210X</option>
+          <option>ProC9200</option><option>ProC9210</option>
+          <option>ProTM C7500 4C</option><option>ProTM C7500 5C</option>
+          <option>ProTM C7500H 4C</option><option>ProTM C7500H 5C</option>
+          <option>ProTM C9500 115pp</option><option>ProTM C9500 135pp</option>
+        </select>
+      </div>
+      <div class="field"><label>Controlador</label>
+        <select id="eq-ctrl">
+          <option value="">Seleccionar controlador...</option>
+          <option>Fiery E27B</option><option>Fiery E28B</option><option>Fiery E36A</option>
+          <option>Fiery E46</option><option>Fiery E46A</option><option>Fiery E47B</option>
+          <option>Fiery E48B</option><option>Fiery E86</option><option>Fiery E86A</option>
+          <option>Fiery EB35</option><option>Fiery EB36</option>
+          <option>Fiery N-50</option><option>Fiery N-50A</option>
+          <option>Fiery N-70</option><option>Fiery N-70A</option>
+        </select>
+      </div>
+    </div>
+    <div class="grid2" style="margin-top:10px">
+      <div class="field"><label>Software 1</label>
+        <select id="eq-sw1">
+          <option value="">Seleccionar software...</option>
+          <option>Automation Impostrip</option><option>Color Logic</option>
+          <option>Fiery Color Profiler Suite</option><option>Fiery Compose</option>
+          <option>Fiery Impose</option><option>Fiery IQ Manage</option>
+          <option>Fiery JobFlow</option><option>Fiery JobMaster</option>
+          <option>Fiery Kit AAGG</option><option>Fusion Pro</option><option>PitStop</option>
+          <option>Ricoh Total Flow Batch Builder</option>
+          <option>Ricoh Total Flow Predictive Insight</option>
+          <option>TF Prep</option><option>Touch7</option>
+        </select>
+      </div>
+      <div class="field"><label>Software 2</label>
+        <select id="eq-sw2">
+          <option value="">Seleccionar software...</option>
+          <option>Automation Impostrip</option><option>Color Logic</option>
+          <option>Fiery Color Profiler Suite</option><option>Fiery Compose</option>
+          <option>Fiery Impose</option><option>Fiery IQ Manage</option>
+          <option>Fiery JobFlow</option><option>Fiery JobMaster</option>
+          <option>Fiery Kit AAGG</option><option>Fusion Pro</option><option>PitStop</option>
+          <option>Ricoh Total Flow Batch Builder</option>
+          <option>Ricoh Total Flow Predictive Insight</option>
+          <option>TF Prep</option><option>Touch7</option>
+        </select>
+      </div>
+    </div>
+    <div class="grid2" style="margin-top:10px">
+      <div class="field"><label>Contrato Ricoh Ticket</label>
+        <select id="eq-contrato-ticket">
+          <option value="">Seleccionar...</option>
+          <option>Edge Pro - Cortesía</option>
+          <option>Edge Pro - (1 año) renovable</option>
+          <option>Edge Pro - (3 años) renovable</option>
+          <option>Edge Pro - (5 años) renovable</option>
+        </select>
+      </div>
+      <div class="field"><label>Otro software</label>
+        <select id="eq-sw3">
+          <option value="">Seleccionar software...</option>
+          <option>AFPtoPDF Plus</option><option>Aleyant Pressero</option>
+          <option>Automation Impostrip</option><option>Compart DocBridge</option>
+          <option>Fusion Pro</option><option>Imaxel OrderNow!</option>
+          <option>InfoPrint Manager</option><option>Ricoh Process Director</option>
+          <option>Ricoh Supervisor</option><option>Stack&amp;Sort</option>
+        </select>
+      </div>
+    </div>
+    <div class="slabel">Configurar contador A3 según contrato</div>
+    <div class="grid2">
+      <div class="field"><label>Contador A3</label>
+        <select id="contador">
+          <option value="">Seleccionar...</option>
+          <option>A3 = A4</option>
+          <option>A3 = 2×A4</option>
+        </select>
+        <span class="info-hint">ℹ️ Tener en cuenta: umbral de paso Banner 265mm según contrato.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Conformidad del cliente</div>
+    <label class="disclaimer-wrap">
+      <input type="checkbox" id="disclaimer-check">
+      <span>El cliente conoce y cumple con los requisitos de instalación y posee los medios necesarios para una correcta conexión con los servicios de soporte especialista y formación de Ricoh, si no se cumpliera alguno, especifique el motivo.</span>
+    </label>
+    <div class="field">
+      <label>Comentarios / motivo</label>
+      <textarea id="disclaimer-comentario" placeholder="Añadir comentarios o especificar motivo si no se cumplen los requisitos..."></textarea>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Imagen configuración del pedido <span style="font-size:11px;color:#888780">(recomendado)</span></div>
+    <div class="img-drop" onclick="document.getElementById('img-in').click()">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="2" width="16" height="16" rx="2"/><path d="M2 13l4-4 3 3 3-2.5 6 5"/><circle cx="6.5" cy="6.5" r="1.5"/></svg>
+      <span id="img-label">Haz clic para insertar captura del pedido</span>
+    </div>
+    <input type="file" id="img-in" accept="image/*" style="display:none" onchange="handleImg(this)">
+    <div id="img-preview-wrap" style="display:none;margin-top:10px">
+      <img id="img-preview" style="max-width:100%;border-radius:6px;border:0.5px solid #d9d9d5">
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn primary" onclick="enviarASAT()">✉ Enviar a SAT →</button>
+  </div>
+</div>
+
+<!-- PASO 2: SAT -->
+<div id="view-sat" style="display:none">
+  <div class="who-bar sat">🔧 Cumplimentar por <strong>Servicio Técnico (SAT)</strong></div>
+
+  <div class="ro-card">
+    <div class="card-title">Información recibida del Comercial <span class="ro-badge">solo lectura</span></div>
+    <div id="ro-com-body"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Datos Contacto Técnico</div>
+    <div class="grid2">
+      <div class="field"><label>Nombre</label><input id="tec-nombre" type="text"></div>
+      <div class="field"><label>Empresa</label><input id="tec-empresa" type="text"></div>
+      <div class="field"><label>Teléfono</label><input id="tec-tel" type="tel"></div>
+      <div class="field"><label>E-mail</label><input id="tec-email" type="email"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Marcar según se hayan realizado estas acciones</div>
+    <div class="check-list">
+      <label class="check-item"><input type="checkbox" id="chk0"><span class="chk-icon">🔄</span><span>Impresora y controlador actualizados a la última versión</span></label>
+      <label class="check-item"><input type="checkbox" id="chk1"><span class="chk-icon">🌐</span><span>Impresora y controlador conectados a red</span></label>
+      <label class="check-item"><input type="checkbox" id="chk2"><span class="chk-icon">🔗</span><span>Conexión remota habilitada</span></label>
+      <label class="check-item"><input type="checkbox" id="chk3"><span class="chk-icon">📐</span><span>Registro comprobado con ±1 mm de tolerancia desde todas las bandejas de producción</span></label>
+      <label class="check-item"><input type="checkbox" id="chk4"><span class="chk-icon">📡</span><span>Conexión @Remote / TF Advisor activada con petición de tóner</span></label>
+      <label class="check-item"><input type="checkbox" id="chk5"><span class="chk-icon">🎯</span><span>Calidad con DQV superada</span></label>
+      <label class="check-item"><input type="checkbox" id="chk6"><span class="chk-icon">📎</span><span>Máxima capacidad grapador / plegador comprobadas</span></label>
+      <label class="check-item"><input type="checkbox" id="chk7"><span class="chk-icon">🎨</span><span>Unidades de 5º color activadas y comprobadas</span></label>
+      <label class="check-item"><input type="checkbox" id="chk8"><span class="chk-icon">🎓</span><span>Formación cambio de 5º color realizada</span></label>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Datos de red de la instalación</div>
+    <div class="grid2">
+      <div class="field"><label>Dirección IP Fiery</label><input id="sat-ip-fiery" type="text" placeholder="192.168.1.10"></div>
+      <div class="field"><label>Dirección IP Máquina</label><input id="sat-ip-maq" type="text" placeholder="192.168.1.11"></div>
+    </div>
+    <div class="field" style="margin-top:10px"><label>Comentarios</label><textarea id="tec-comentario" placeholder="Añadir cualquier comentario relevante sobre la instalación..."></textarea></div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn primary" onclick="enviarAFormador()">✉ Enviar a Formador HW/SW →</button>
+  </div>
+</div>
+
+<!-- PASO 3: FORMADOR -->
+<div id="view-formador" style="display:none">
+  <div class="who-bar frm">🎓 Cumplimentar por <strong>Formador HW / SW</strong></div>
+
+  <div class="ro-card">
+    <div class="card-title">Información del Comercial <span class="ro-badge">solo lectura</span></div>
+    <div id="ro-com-body2"></div>
+  </div>
+
+  <div class="ro-card">
+    <div class="card-title">Información del SAT <span class="ro-badge sat">solo lectura</span></div>
+    <div id="ro-sat-body"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Datos Contacto Formador HW / SW</div>
+    <div class="grid2">
+      <div class="field"><label>Nombre</label><input id="frm-nombre" type="text"></div>
+      <div class="field"><label>Teléfono</label><input id="frm-tel" type="tel"></div>
+      <div class="field" style="grid-column:1/3"><label>E-mail</label><input id="frm-email" type="email"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Datos de alta cliente Ricoh Ticket</div>
+    <div class="slabel">Cliente Administrador</div>
+    <div class="grid3">
+      <div class="field"><label>Nombre</label><input id="adm-nombre" type="text"></div>
+      <div class="field"><label>Teléfono</label><input id="adm-tel" type="tel"></div>
+      <div class="field"><label>E-mail</label><input id="adm-email" type="email"></div>
+    </div>
+    <div class="slabel">Cliente Usuario</div>
+    <div class="grid3">
+      <div class="field"><label>Nombre</label><input id="usr-nombre" type="text"></div>
+      <div class="field"><label>Teléfono</label><input id="usr-tel" type="tel"></div>
+      <div class="field"><label>E-mail</label><input id="usr-email" type="email"></div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn primary" onclick="cerrarExpediente()">✓ Alta en Ricoh Ticket</button>
+  </div>
+  <div class="final-ok" id="final-ok">✓ Alta en Ricoh Ticket solicitada correctamente. Se ha notificado a los destinatarios.</div>
+</div>
+
+</div>
+
+<script>
+var imgData=null;
+function v(id){var el=document.getElementById(id);return el?(el.value.trim()||'—'):'—';}
+function rrow(lbl,val){return '<div class="rrow"><span>'+lbl+'</span><span>'+val+'</span></div>';}
+
+function buildRoComercial(){
+  var sw='';
+  if(v('eq-sw1')!=='—') sw+=rrow('Software 1',v('eq-sw1'));
+  if(v('eq-sw2')!=='—') sw+=rrow('Software 2',v('eq-sw2'));
+  if(v('eq-contrato-ticket')!=='—') sw+=rrow('Contrato Ricoh Ticket',v('eq-contrato-ticket'));
+  if(v('eq-sw3')!=='—') sw+=rrow('Otro software',v('eq-sw3'));
+  var disc=document.getElementById('disclaimer-check');
+  var discVal=disc&&disc.checked?'Sí, conforme':'Pendiente de confirmar';
+  return rrow('Comercial',v('c-nombre'))+rrow('Empresa',v('c-empresa'))+rrow('Teléfono',v('c-tel'))+rrow('E-mail',v('c-email'))+
+    '<div style="height:8px"></div>'+
+    rrow('Cliente',v('cl-empresa'))+rrow('Dirección',v('cl-dir'))+rrow('Teléfono cliente',v('cl-tel'))+rrow('E-mail cliente',v('cl-email'))+
+    '<div style="height:8px"></div>'+
+    rrow('Modelo',v('eq-modelo'))+rrow('Controlador',v('eq-ctrl'))+sw+
+    rrow('Account Number',v('eq-acc'))+rrow('Nº Pedido Oracle',v('eq-oracle'))+rrow('Nº Pedido Siebel',v('eq-siebel'))+
+    rrow('Contador A3',v('contador'))+
+    '<div style="height:8px"></div>'+
+    rrow('Conformidad cliente',discVal)+
+    (v('disclaimer-comentario')!=='—'?rrow('Comentarios',v('disclaimer-comentario')):'');
+}
+
+function buildRoSAT(){
+  var chks=[];
+  for(var i=0;i<9;i++){var el=document.getElementById('chk'+i);if(el&&el.checked)chks.push(el.nextElementSibling.nextElementSibling.textContent);}
+  return rrow('Técnico',v('tec-nombre'))+rrow('Empresa',v('tec-empresa'))+rrow('Teléfono',v('tec-tel'))+rrow('E-mail',v('tec-email'))+
+    '<div style="height:8px"></div>'+
+    '<div style="font-size:11px;color:#5f5e5a;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:6px;font-weight:500">Acciones completadas ('+chks.length+'/9)</div>'+
+    chks.map(function(t){return '<div class="chk-done">✓ '+t+'</div>';}).join('')+
+    '<div style="height:8px"></div>'+
+    rrow('IP Fiery',v('sat-ip-fiery'))+rrow('IP Máquina',v('sat-ip-maq'))+
+    (v('tec-comentario')!=='—'?rrow('Comentarios',v('tec-comentario')):'');
+}
+
+function handleImg(inp){
+  var f=inp.files[0];if(!f)return;
+  var r=new FileReader();
+  r.onload=function(e){
+    imgData=e.target.result;
+    document.getElementById('img-label').textContent='✓ '+f.name;
+    document.getElementById('img-preview').src=imgData;
+    document.getElementById('img-preview-wrap').style.display='block';
+  };
+  r.readAsDataURL(f);
+}
+
+function enviarASAT(){
+  var asunto=encodeURIComponent('Ricoh Checklist e-Training — Acción requerida: Servicio Técnico');
+  var cuerpo=encodeURIComponent('Estimado/a equipo de Servicio Técnico,\n\nEl responsable comercial '+v('c-nombre')+' ha completado su parte del Checklist e-Training para el siguiente cliente y equipo:\n\n  Cliente: '+v('cl-empresa')+'\n  Modelo: '+v('eq-modelo')+'\n\nPor favor, accede al formulario para cumplimentar la sección correspondiente al Servicio Técnico (SAT).\n\nGracias.\n');
+  window.location.href='mailto:pedro.lanza@ricoh.es?subject='+asunto+'&body='+cuerpo;
+  setTimeout(function(){
+    document.getElementById('view-comercial').style.display='none';
+    document.getElementById('view-sat').style.display='block';
+    document.getElementById('ro-com-body').innerHTML=buildRoComercial();
+    document.getElementById('bar-sub').textContent='Paso 2 de 3 · Servicio Técnico (SAT)';
+    window.scrollTo(0,0);
+  },500);
+}
+
+function enviarAFormador(){
+  var asunto=encodeURIComponent('Ricoh Checklist e-Training — Acción requerida: Formador HW/SW');
+  var cuerpo=encodeURIComponent('Estimado/a equipo de Formación HW/SW,\n\nEl Servicio Técnico ('+v('tec-nombre')+') ha completado su parte del Checklist e-Training para el siguiente cliente y equipo:\n\n  Cliente: '+v('cl-empresa')+'\n  Modelo: '+v('eq-modelo')+'\n\nPor favor, accede al formulario para cumplimentar la sección correspondiente al Formador HW/SW.\n\nGracias.\n');
+  window.location.href='mailto:RES_PREVENTA_RGC@ricoh.es?subject='+asunto+'&body='+cuerpo;
+  setTimeout(function(){
+    document.getElementById('view-sat').style.display='none';
+    document.getElementById('view-formador').style.display='block';
+    document.getElementById('ro-com-body2').innerHTML=buildRoComercial();
+    document.getElementById('ro-sat-body').innerHTML=buildRoSAT();
+    document.getElementById('bar-sub').textContent='Paso 3 de 3 · Formador HW / SW';
+    window.scrollTo(0,0);
+  },500);
+}
+
+function cerrarExpediente(){
+  var asunto=encodeURIComponent('Ricoh Checklist e-Training — Alta en Ricoh Ticket: '+v('cl-empresa'));
+  var cuerpo=encodeURIComponent(
+    'Estimado/a equipo,\n\n'+
+    'Se solicita alta en Ricoh Ticket para el siguiente cliente:\n\n'+
+    '  Nombre de cliente: '+v('cl-empresa')+'\n'+
+    '  Modelo de máquina: '+v('eq-modelo')+'\n'+
+    '  Nombre comercial responsable: '+v('c-nombre')+'\n'+
+    '  Nombre técnico instalador: '+v('tec-nombre')+'\n'+
+    '  Nombre formador: '+v('frm-nombre')+'\n'+
+    '  Comentarios: '+(v('tec-comentario')!=='—'?v('tec-comentario'):'Sin comentarios')+'\n\n'+
+    'Gracias.\n'
+  );
+  var dest='carlos.casado@ricoh.es;carlos.cano@ricoh.es;raquel.depaco@ricoh.es';
+  window.location.href='mailto:'+encodeURIComponent(dest)+'?subject='+asunto+'&body='+cuerpo;
+  setTimeout(function(){
+    document.getElementById('final-ok').style.display='block';
+    document.querySelector('#view-formador .btn.primary').disabled=true;
+    window.scrollTo(0,9999);
+  },500);
+}
+</script>
+</body>
+</html>
