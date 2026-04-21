@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!-- ricoh_checklist_etraining.html -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -48,22 +47,21 @@ body{font-family:Arial,sans-serif;background:#f5f5f3;color:#1a1a18}
 .btn:hover{background:#f5f5f3}
 .btn.primary{background:#1a3a5c;color:#fff;border-color:#1a3a5c}
 .btn.primary:hover{background:#152e4a}
-.final-ok{padding:16px;background:#eaf3de;border-radius:6px;font-size:13px;color:#274d0e;text-align:center;margin-top:1rem;display:none}
-.chk-done{font-size:12px;color:#1a1a18;padding:3px 0;border-bottom:0.5px solid #d9d9d5}
 .info-hint{font-size:11px;color:#5f5e5a;margin-top:4px;line-height:1.5}
 .warning-box{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;background:#faeeda;border-radius:6px;border:0.5px solid #fac775}
-.warning-box span.icon{font-size:18px;flex-shrink:0}
-.warning-box span.txt{font-size:13px;color:#633806;line-height:1.6}
+.final-ok{padding:16px;background:#eaf3de;border-radius:6px;font-size:13px;color:#274d0e;text-align:center;margin-top:1rem;display:none}
+.chk-done{font-size:12px;color:#1a1a18;padding:3px 0;border-bottom:0.5px solid #d9d9d5}
 </style>
 </head>
 <body>
 <div class="shell">
+
 <div class="topbar">
   <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect width="28" height="28" rx="6" fill="#ffffff22"/><rect x="4" y="9" width="20" height="12" rx="2" stroke="#fff" stroke-width="1.4"/><path d="M8 9V7a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2" stroke="#fff" stroke-width="1.3"/><circle cx="21" cy="14" r="1" fill="#fff"/><rect x="8" y="16" width="12" height="5" rx="1" fill="#ffffff33" stroke="#fff" stroke-width="1"/></svg>
   <div><h1>Ricoh Graphic Communications — Checklist e-Training</h1><p id="bar-sub">Paso 1 de 3 · Responsable Comercial</p></div>
 </div>
 
-<!-- RESUMEN COMPLETO -->
+<!-- RESUMEN -->
 <div id="view-resumen" style="display:none">
   <div style="background:#1a3a5c;border-radius:6px;padding:10px 14px;margin-bottom:1rem;display:flex;align-items:center;gap:8px">
     <span style="font-size:16px">📋</span>
@@ -196,7 +194,7 @@ body{font-family:Arial,sans-serif;background:#f5f5f3;color:#1a1a18}
         <select id="contador">
           <option value="">Seleccionar...</option>
           <option>A3 = A4</option>
-          <option>A3 = 2×A4</option>
+          <option>A3 = 2xA4</option>
         </select>
         <span class="info-hint">ℹ️ Tener en cuenta: umbral de paso Banner 265mm según contrato.</span>
       </div>
@@ -217,13 +215,13 @@ body{font-family:Arial,sans-serif;background:#f5f5f3;color:#1a1a18}
 
   <div class="card">
     <div class="warning-box">
-      <span class="icon">⚠️</span>
-      <span class="txt"><strong>IMPORTANTE:</strong> Adjunta a este correo la captura de pantalla de la configuración del pedido antes de enviarlo.</span>
+      <span style="font-size:18px;flex-shrink:0">⚠️</span>
+      <span style="font-size:13px;color:#633806;line-height:1.6"><strong>IMPORTANTE:</strong> Adjunta a este correo la captura de pantalla de la configuración del pedido antes de enviarlo.</span>
     </div>
   </div>
 
   <div class="btn-row">
-    <button class="btn primary" onclick="enviarASAT()">✉ Enviar a SAT →</button>
+    <button class="btn primary" id="btn-enviar-sat">✉ Enviar a SAT →</button>
   </div>
 </div>
 
@@ -271,7 +269,7 @@ body{font-family:Arial,sans-serif;background:#f5f5f3;color:#1a1a18}
   </div>
 
   <div class="btn-row">
-    <button class="btn primary" onclick="enviarAFormador()">✉ Enviar a Formador HW/SW →</button>
+    <button class="btn primary" id="btn-enviar-formador">✉ Enviar a Formador HW/SW →</button>
   </div>
 </div>
 
@@ -315,7 +313,7 @@ body{font-family:Arial,sans-serif;background:#f5f5f3;color:#1a1a18}
   </div>
 
   <div class="btn-row">
-    <button class="btn primary" onclick="cerrarExpediente()">✓ Alta en Ricoh Ticket</button>
+    <button class="btn primary" id="btn-alta">✓ Alta en Ricoh Ticket</button>
   </div>
   <div class="final-ok" id="final-ok">✓ Alta en Ricoh Ticket solicitada correctamente. Se ha notificado a los destinatarios.</div>
 </div>
@@ -323,162 +321,32 @@ body{font-family:Arial,sans-serif;background:#f5f5f3;color:#1a1a18}
 </div>
 
 <script>
-var imgData=null;
+var BASE_URL='https://julianheranz.github.io/ricoh-checklist/';
 
-window.onload=function(){cargarDesdeURL();};
+function v(id){
+  var el=document.getElementById(id);
+  return el?(el.value.trim()||''):'';
+}
 
-function v(id){var el=document.getElementById(id);return el?(el.value.trim()||'—'):'—';}
-function rrow(lbl,val){return '<div class="rrow"><span>'+lbl+'</span><span>'+val+'</span></div>';}
+function vd(id){
+  var r=v(id);
+  return r||'—';
+}
+
+function rrow(lbl,val){
+  return '<div class="rrow"><span>'+lbl+'</span><span>'+(val||'—')+'</span></div>';
+}
 
 function getParams(){
   var p={};
-  window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi,function(m,k,val){p[decodeURIComponent(k)]=decodeURIComponent(val.replace(/\+/g,' '));});
+  window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi,function(m,k,val){
+    p[decodeURIComponent(k)]=decodeURIComponent(val.replace(/\+/g,' '));
+  });
   return p;
 }
 
-function cargarDesdeURL(){
-  var p=getParams();
-  if(!p.paso) return;
-  var d={
-    'c-nombre':p.c_nombre||'','c-empresa':p.c_empresa||'','c-tel':p.c_tel||'','c-email':p.c_email||'',
-    'cl-empresa':p.cl_empresa||'','cl-dir':p.cl_dir||'','cl-tel':p.cl_tel||'','cl-email':p.cl_email||'',
-    'eq-acc':p.eq_acc||'','eq-oracle':p.eq_oracle||'','eq-siebel':p.eq_siebel||'',
-    'eq-modelo':p.eq_modelo||'','eq-ctrl':p.eq_ctrl||'',
-    'eq-sw1':p.eq_sw1||'','eq-sw2':p.eq_sw2||'','eq-contrato-ticket':p.eq_ticket||'','eq-sw3':p.eq_sw3||'',
-    'contador':p.contador||'','disclaimer-comentario':p.disc_com||''
-  };
-  window._datosComercial=d;
-  window._discCheck=p.disc==='1';
-
-  if(p.paso==='SAT'){
-    document.getElementById('view-comercial').style.display='none';
-    document.getElementById('view-sat').style.display='block';
-    document.getElementById('bar-sub').textContent='Paso 2 de 3 · Servicio Técnico (SAT)';
-    document.getElementById('ro-com-body').innerHTML=buildRoComercialFromData(d,p.disc==='1',p.disc_com||'');
-  }
-  if(p.paso==='RESUMEN'){
-    document.getElementById('view-comercial').style.display='none';
-    document.getElementById('view-resumen').style.display='block';
-    document.getElementById('bar-sub').textContent='Resumen del expediente';
-    var d2={
-      'c-nombre':p.c_nombre||'—','c-empresa':p.c_empresa||'—','c-tel':p.c_tel||'—','c-email':p.c_email||'—',
-      'cl-empresa':p.cl_empresa||'—','cl-dir':p.cl_dir||'—','cl-tel':p.cl_tel||'—','cl-email':p.cl_email||'—',
-      'eq-acc':p.eq_acc||'—','eq-oracle':p.eq_oracle||'—','eq-siebel':p.eq_siebel||'—',
-      'eq-modelo':p.eq_modelo||'—','eq-ctrl':p.eq_ctrl||'—',
-      'eq-sw1':p.eq_sw1||'—','eq-sw2':p.eq_sw2||'—','eq-contrato-ticket':p.eq_ticket||'—','eq-sw3':p.eq_sw3||'—',
-      'contador':p.contador||'—','disclaimer-comentario':p.disc_com||'—'
-    };
-    var datosSAT2={
-      'tec-nombre':p.tec_nombre||'—','tec-empresa':p.tec_empresa||'—','tec-tel':p.tec_tel||'—','tec-email':p.tec_email||'—',
-      'sat-ip-fiery':p.ip_fiery||'—','sat-ip-maq':p.ip_maq||'—','tec-comentario':p.tec_com||'—',
-      chks:p.chks||'000000000'
-    };
-    document.getElementById('res-comercial').innerHTML=buildRoComercialFromData(d2,p.disc==='1',p.disc_com||'');
-    document.getElementById('res-sat').innerHTML=buildRoSATFromData(datosSAT2);
-    document.getElementById('res-formador').innerHTML=
-      rrow('Formador',p.frm_nombre||'—')+rrow('Teléfono',p.frm_tel||'—')+rrow('E-mail',p.frm_email||'—')+
-      '<div style="height:8px"></div>'+
-      rrow('Administrador',p.adm_nombre||'—')+rrow('Teléfono admin',p.adm_tel||'—')+rrow('E-mail admin',p.adm_email||'—')+
-      '<div style="height:8px"></div>'+
-      rrow('Usuario',p.usr_nombre||'—')+rrow('Teléfono usuario',p.usr_tel||'—')+rrow('E-mail usuario',p.usr_email||'—');
-  }
-    var datosSAT={
-      'tec-nombre':p.tec_nombre||'','tec-empresa':p.tec_empresa||'','tec-tel':p.tec_tel||'','tec-email':p.tec_email||'',
-      'sat-ip-fiery':p.ip_fiery||'','sat-ip-maq':p.ip_maq||'','tec-comentario':p.tec_com||'',
-      chks:p.chks||'000000000'
-    };
-    document.getElementById('view-comercial').style.display='none';
-    document.getElementById('view-formador').style.display='block';
-    document.getElementById('bar-sub').textContent='Paso 3 de 3 · Formador HW / SW';
-    document.getElementById('ro-com-body2').innerHTML=buildRoComercialFromData(d,p.disc==='1',p.disc_com||'');
-    document.getElementById('ro-sat-body').innerHTML=buildRoSATFromData(datosSAT);
-  }
-}
-
-function buildRoComercial(){
-  var d=window._datosComercial||{};
-  var disc=document.getElementById('disclaimer-check');
-  return buildRoComercialFromData({
-    'c-nombre':v('c-nombre'),'c-empresa':v('c-empresa'),'c-tel':v('c-tel'),'c-email':v('c-email'),
-    'cl-empresa':v('cl-empresa'),'cl-dir':v('cl-dir'),'cl-tel':v('cl-tel'),'cl-email':v('cl-email'),
-    'eq-acc':v('eq-acc'),'eq-oracle':v('eq-oracle'),'eq-siebel':v('eq-siebel'),
-    'eq-modelo':v('eq-modelo'),'eq-ctrl':v('eq-ctrl'),
-    'eq-sw1':v('eq-sw1'),'eq-sw2':v('eq-sw2'),'eq-contrato-ticket':v('eq-contrato-ticket'),'eq-sw3':v('eq-sw3'),
-    'contador':v('contador'),'disclaimer-comentario':v('disclaimer-comentario')
-  },disc&&disc.checked,v('disclaimer-comentario'));
-}
-
-function buildRoComercialFromData(d,disc,discCom){
-  var sw='';
-  if(d['eq-sw1']&&d['eq-sw1']!=='—') sw+=rrow('Software 1',d['eq-sw1']);
-  if(d['eq-sw2']&&d['eq-sw2']!=='—') sw+=rrow('Software 2',d['eq-sw2']);
-  if(d['eq-contrato-ticket']&&d['eq-contrato-ticket']!=='—') sw+=rrow('Contrato Ricoh Ticket',d['eq-contrato-ticket']);
-  if(d['eq-sw3']&&d['eq-sw3']!=='—') sw+=rrow('Otro software',d['eq-sw3']);
-  return rrow('Comercial',d['c-nombre']||'—')+rrow('Empresa',d['c-empresa']||'—')+rrow('Teléfono',d['c-tel']||'—')+rrow('E-mail',d['c-email']||'—')+
-    '<div style="height:8px"></div>'+
-    rrow('Cliente',d['cl-empresa']||'—')+rrow('Dirección',d['cl-dir']||'—')+rrow('Teléfono cliente',d['cl-tel']||'—')+rrow('E-mail cliente',d['cl-email']||'—')+
-    '<div style="height:8px"></div>'+
-    rrow('Modelo',d['eq-modelo']||'—')+rrow('Controlador',d['eq-ctrl']||'—')+sw+
-    rrow('Account Number',d['eq-acc']||'—')+rrow('Nº Pedido Oracle',d['eq-oracle']||'—')+rrow('Nº Pedido Siebel',d['eq-siebel']||'—')+
-    rrow('Contador A3',d['contador']||'—')+
-    '<div style="height:8px"></div>'+
-    rrow('Conformidad cliente',disc?'Sí, conforme':'Pendiente de confirmar')+
-    (discCom&&discCom!=='—'?rrow('Comentarios',discCom):'');
-}
-
-function buildRoSAT(){
-  var items=[
-    {id:'chk0',icon:'🔄',txt:'Impresora y controlador actualizados a la última versión'},
-    {id:'chk1',icon:'🌐',txt:'Impresora y controlador conectados a red'},
-    {id:'chk2',icon:'🔗',txt:'Conexión remota habilitada'},
-    {id:'chk3',icon:'📐',txt:'Registro comprobado con ±1 mm de tolerancia desde todas las bandejas de producción'},
-    {id:'chk4',icon:'📡',txt:'Conexión @Remote / TF Advisor activada con petición de tóner'},
-    {id:'chk5',icon:'🎯',txt:'Calidad con DQV superada'},
-    {id:'chk6',icon:'📎',txt:'Máxima capacidad grapador / plegador comprobadas'},
-    {id:'chk7',icon:'🎨',txt:'Unidades de 5º color activadas y comprobadas'},
-    {id:'chk8',icon:'🎓',txt:'Formación cambio de 5º color realizada'}
-  ];
-  var completadas=0;
-  var chkStr='';
-  var filas=items.map(function(item){
-    var el=document.getElementById(item.id);
-    var done=el&&el.checked;
-    if(done) completadas++;
-    chkStr+=(done?'1':'0');
-    return '<div class="rrow"><span>'+(done?'✅':'⬜')+' '+item.icon+' '+item.txt+'</span><span style="color:'+(done?'#3b6d11':'#a32d2d')+';">'+(done?'Realizado':'Pendiente')+'</span></div>';
-  }).join('');
-  window._chkStr=chkStr;
-  return rrow('Técnico',v('tec-nombre'))+rrow('Empresa',v('tec-empresa'))+rrow('Teléfono',v('tec-tel'))+rrow('E-mail',v('tec-email'))+
-    '<div style="height:8px"></div>'+
-    '<div style="font-size:11px;color:#5f5e5a;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:6px;font-weight:500">Acciones ('+completadas+'/9 realizadas)</div>'+
-    filas+
-    '<div style="height:8px"></div>'+
-    rrow('IP Fiery',v('sat-ip-fiery'))+rrow('IP Máquina',v('sat-ip-maq'))+
-    (v('tec-comentario')!=='—'?rrow('Comentarios',v('tec-comentario')):'');
-}
-
-function buildRoSATFromData(d){
-  var labels=['Impresora y controlador actualizados a la última versión','Impresora y controlador conectados a red','Conexión remota habilitada','Registro comprobado con ±1 mm de tolerancia desde todas las bandejas de producción','Conexión @Remote / TF Advisor activada con petición de tóner','Calidad con DQV superada','Máxima capacidad grapador / plegador comprobadas','Unidades de 5º color activadas y comprobadas','Formación cambio de 5º color realizada'];
-  var icons=['🔄','🌐','🔗','📐','📡','🎯','📎','🎨','🎓'];
-  var chks=d.chks||'000000000';
-  var completadas=0;
-  var filas=labels.map(function(txt,i){
-    var done=chks[i]==='1';
-    if(done) completadas++;
-    return '<div class="rrow"><span>'+(done?'✅':'⬜')+' '+icons[i]+' '+txt+'</span><span style="color:'+(done?'#3b6d11':'#a32d2d')+';">'+(done?'Realizado':'Pendiente')+'</span></div>';
-  }).join('');
-  return rrow('Técnico',d['tec-nombre']||'—')+rrow('Empresa',d['tec-empresa']||'—')+rrow('Teléfono',d['tec-tel']||'—')+rrow('E-mail',d['tec-email']||'—')+
-    '<div style="height:8px"></div>'+
-    '<div style="font-size:11px;color:#5f5e5a;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:6px;font-weight:500">Acciones ('+completadas+'/9 realizadas)</div>'+
-    filas+
-    '<div style="height:8px"></div>'+
-    rrow('IP Fiery',d['sat-ip-fiery']||'—')+rrow('IP Máquina',d['sat-ip-maq']||'—')+
-    (d['tec-comentario']&&d['tec-comentario']!=='—'?rrow('Comentarios',d['tec-comentario']):'');
-}
-
-function buildSATUrl(){
-  var URL_FORMULARIO='https://julianheranz.github.io/ricoh-checklist/';
-  var params={
+function buildComercialData(){
+  return {
     paso:'SAT',
     c_nombre:v('c-nombre'),c_empresa:v('c-empresa'),c_tel:v('c-tel'),c_email:v('c-email'),
     cl_empresa:v('cl-empresa'),cl_dir:v('cl-dir'),cl_tel:v('cl-tel'),cl_email:v('cl-email'),
@@ -489,113 +357,164 @@ function buildSATUrl(){
     disc:document.getElementById('disclaimer-check').checked?'1':'0',
     disc_com:v('disclaimer-comentario')
   };
-  var qs=Object.keys(params).map(function(k){return encodeURIComponent(k)+'='+encodeURIComponent(params[k]);}).join('&');
-  return URL_FORMULARIO+'?'+qs;
 }
 
-function buildFormadorUrl(satUrl){
-  var URL_FORMULARIO='https://julianheranz.github.io/ricoh-checklist/';
-  var chkStr=window._chkStr||'000000000';
-  var extra='&paso=FORMADOR'+
-    '&tec_nombre='+encodeURIComponent(v('tec-nombre'))+
-    '&tec_empresa='+encodeURIComponent(v('tec-empresa'))+
-    '&tec_tel='+encodeURIComponent(v('tec-tel'))+
-    '&tec_email='+encodeURIComponent(v('tec-email'))+
-    '&ip_fiery='+encodeURIComponent(v('sat-ip-fiery'))+
-    '&ip_maq='+encodeURIComponent(v('sat-ip-maq'))+
-    '&tec_com='+encodeURIComponent(v('tec-comentario'))+
-    '&chks='+chkStr;
-  return satUrl+extra;
+function objToQS(params){
+  return Object.keys(params).map(function(k){
+    return encodeURIComponent(k)+'='+encodeURIComponent(params[k]||'');
+  }).join('&');
 }
 
-function enviarASAT(){
-  var urlSAT=buildSATUrl();
-  var asunto=encodeURIComponent('Ricoh Checklist e-Training — Acción requerida: Servicio Técnico');
-  var cuerpo=encodeURIComponent('Estimado/a equipo de Servicio Técnico,\n\nEl responsable comercial '+v('c-nombre')+' ha completado su parte del Checklist e-Training para el siguiente cliente y equipo:\n\n  Cliente: '+v('cl-empresa')+'\n  Modelo: '+v('eq-modelo')+'\n\nPor favor, accede al siguiente enlace para cumplimentar la sección correspondiente al Servicio Técnico (SAT):\n\n  '+urlSAT+'\n\n⚠️ IMPORTANTE: Adjunta a este correo la captura de pantalla de la configuración del pedido antes de enviarlo.\n\nGracias.\n');
-  window.location.href='mailto:pedro.lanza@ricoh.es?subject='+asunto+'&body='+cuerpo;
-  setTimeout(function(){
-    document.getElementById('view-comercial').style.display='none';
-    document.getElementById('view-sat').style.display='block';
-    document.getElementById('ro-com-body').innerHTML=buildRoComercial();
-    document.getElementById('bar-sub').textContent='Paso 2 de 3 · Servicio Técnico (SAT)';
-    window.scrollTo(0,0);
-  },500);
+function buildSATUrl(){
+  var d=buildComercialData();
+  return BASE_URL+'?'+objToQS(d);
 }
 
-function enviarAFormador(){
-  var satUrl=buildSATUrl();
-  buildRoSAT();
-  var urlFormador=buildFormadorUrl(satUrl);
-  var asunto=encodeURIComponent('Ricoh Checklist e-Training — Acción requerida: Formador HW/SW');
-  var cuerpo=encodeURIComponent('Estimado/a equipo de Formación HW/SW,\n\nEl Servicio Técnico ('+v('tec-nombre')+') ha completado su parte del Checklist e-Training para el siguiente cliente y equipo:\n\n  Cliente: '+v('cl-empresa')+'\n  Modelo: '+v('eq-modelo')+'\n\nPor favor, accede al siguiente enlace para cumplimentar la sección correspondiente al Formador HW/SW:\n\n  '+urlFormador+'\n\nGracias.\n');
-  window.location.href='mailto:RES_PREVENTA_RGC@ricoh.es?subject='+asunto+'&body='+cuerpo;
-  setTimeout(function(){
-    document.getElementById('view-sat').style.display='none';
-    document.getElementById('view-formador').style.display='block';
-    document.getElementById('ro-com-body2').innerHTML=buildRoComercial();
-    document.getElementById('ro-sat-body').innerHTML=buildRoSAT();
-    document.getElementById('bar-sub').textContent='Paso 3 de 3 · Formador HW / SW';
-    window.scrollTo(0,0);
-  },500);
+function buildFormadorUrl(p){
+  var chks='';
+  for(var i=0;i<9;i++){
+    var el=document.getElementById('chk'+i);
+    chks+=(el&&el.checked)?'1':'0';
+  }
+  var params={
+    paso:'FORMADOR',
+    c_nombre:p.c_nombre||'',c_empresa:p.c_empresa||'',c_tel:p.c_tel||'',c_email:p.c_email||'',
+    cl_empresa:p.cl_empresa||'',cl_dir:p.cl_dir||'',cl_tel:p.cl_tel||'',cl_email:p.cl_email||'',
+    eq_acc:p.eq_acc||'',eq_oracle:p.eq_oracle||'',eq_siebel:p.eq_siebel||'',
+    eq_modelo:p.eq_modelo||'',eq_ctrl:p.eq_ctrl||'',
+    eq_sw1:p.eq_sw1||'',eq_sw2:p.eq_sw2||'',eq_ticket:p.eq_ticket||'',eq_sw3:p.eq_sw3||'',
+    contador:p.contador||'',disc:p.disc||'0',disc_com:p.disc_com||'',
+    tec_nombre:v('tec-nombre'),tec_empresa:v('tec-empresa'),tec_tel:v('tec-tel'),tec_email:v('tec-email'),
+    ip_fiery:v('sat-ip-fiery'),ip_maq:v('sat-ip-maq'),tec_com:v('tec-comentario'),
+    chks:chks
+  };
+  return BASE_URL+'?'+objToQS(params);
 }
 
-function buildResumenUrl(){
-  var URL_FORMULARIO='https://julianheranz.github.io/ricoh-checklist/';
-  var p=getParams();
+function buildResumenUrl(p){
   var params={
     paso:'RESUMEN',
-    c_nombre:p.c_nombre||v('c-nombre'),c_empresa:p.c_empresa||v('c-empresa'),
-    c_tel:p.c_tel||v('c-tel'),c_email:p.c_email||v('c-email'),
-    cl_empresa:p.cl_empresa||v('cl-empresa'),cl_dir:p.cl_dir||v('cl-dir'),
-    cl_tel:p.cl_tel||v('cl-tel'),cl_email:p.cl_email||v('cl-email'),
-    eq_acc:p.eq_acc||v('eq-acc'),eq_oracle:p.eq_oracle||v('eq-oracle'),
-    eq_siebel:p.eq_siebel||v('eq-siebel'),eq_modelo:p.eq_modelo||v('eq-modelo'),
-    eq_ctrl:p.eq_ctrl||v('eq-ctrl'),eq_sw1:p.eq_sw1||v('eq-sw1'),
-    eq_sw2:p.eq_sw2||v('eq-sw2'),eq_ticket:p.eq_ticket||v('eq-contrato-ticket'),
-    eq_sw3:p.eq_sw3||v('eq-sw3'),contador:p.contador||v('contador'),
-    disc:p.disc||(document.getElementById('disclaimer-check')&&document.getElementById('disclaimer-check').checked?'1':'0'),
-    disc_com:p.disc_com||v('disclaimer-comentario'),
-    tec_nombre:p.tec_nombre||v('tec-nombre'),tec_empresa:p.tec_empresa||v('tec-empresa'),
-    tec_tel:p.tec_tel||v('tec-tel'),tec_email:p.tec_email||v('tec-email'),
-    ip_fiery:p.ip_fiery||v('sat-ip-fiery'),ip_maq:p.ip_maq||v('sat-ip-maq'),
-    tec_com:p.tec_com||v('tec-comentario'),chks:p.chks||window._chkStr||'000000000',
+    c_nombre:p.c_nombre||'',c_empresa:p.c_empresa||'',c_tel:p.c_tel||'',c_email:p.c_email||'',
+    cl_empresa:p.cl_empresa||'',cl_dir:p.cl_dir||'',cl_tel:p.cl_tel||'',cl_email:p.cl_email||'',
+    eq_acc:p.eq_acc||'',eq_oracle:p.eq_oracle||'',eq_siebel:p.eq_siebel||'',
+    eq_modelo:p.eq_modelo||'',eq_ctrl:p.eq_ctrl||'',
+    eq_sw1:p.eq_sw1||'',eq_sw2:p.eq_sw2||'',eq_ticket:p.eq_ticket||'',eq_sw3:p.eq_sw3||'',
+    contador:p.contador||'',disc:p.disc||'0',disc_com:p.disc_com||'',
+    tec_nombre:p.tec_nombre||'',tec_empresa:p.tec_empresa||'',tec_tel:p.tec_tel||'',tec_email:p.tec_email||'',
+    ip_fiery:p.ip_fiery||'',ip_maq:p.ip_maq||'',tec_com:p.tec_com||'',chks:p.chks||'000000000',
     frm_nombre:v('frm-nombre'),frm_tel:v('frm-tel'),frm_email:v('frm-email'),
     adm_nombre:v('adm-nombre'),adm_tel:v('adm-tel'),adm_email:v('adm-email'),
     usr_nombre:v('usr-nombre'),usr_tel:v('usr-tel'),usr_email:v('usr-email')
   };
-  var qs=Object.keys(params).map(function(k){return encodeURIComponent(k)+'='+encodeURIComponent(params[k]);}).join('&');
-  return URL_FORMULARIO+'?'+qs;
+  return BASE_URL+'?'+objToQS(params);
 }
 
-function cerrarExpediente(){
-  var p=getParams();
-  var cliente=p.cl_empresa||v('cl-empresa');
-  var modelo=p.eq_modelo||v('eq-modelo');
-  var comercial=p.c_nombre||v('c-nombre');
-  var tecnico=p.tec_nombre||v('tec-nombre');
-  var urlResumen=buildResumenUrl();
-  var asunto=encodeURIComponent('Ricoh Checklist e-Training — Alta en Ricoh Ticket: '+cliente);
-  var cuerpo=encodeURIComponent(
-    'Estimado/a equipo,\n\n'+
-    'Se solicita alta en Ricoh Ticket para el siguiente cliente:\n\n'+
-    '  Nombre de cliente: '+cliente+'\n'+
-    '  Modelo de máquina: '+modelo+'\n'+
-    '  Nombre comercial responsable: '+comercial+'\n'+
-    '  Nombre técnico instalador: '+tecnico+'\n'+
-    '  Nombre formador: '+v('frm-nombre')+'\n'+
-    '  Comentarios: '+(p.tec_com&&p.tec_com!=='—'?p.tec_com:(v('tec-comentario')!=='—'?v('tec-comentario'):'Sin comentarios'))+'\n\n'+
-    '📋 Accede al resumen completo del expediente en el siguiente enlace:\n\n'+
-    '  '+urlResumen+'\n\n'+
-    'Gracias.\n'
-  );
-  var dest='carlos.casado@ricoh.es;carlos.cano@ricoh.es;raquel.depaco@ricoh.es';
-  window.location.href='mailto:'+encodeURIComponent(dest)+'?subject='+asunto+'&body='+cuerpo;
-  setTimeout(function(){
-    document.getElementById('final-ok').style.display='block';
-    document.querySelector('#view-formador .btn.primary').disabled=true;
-    window.scrollTo(0,9999);
-  },500);
+function buildRoComercialFromData(p){
+  var sw='';
+  if(p.eq_sw1) sw+=rrow('Software 1',p.eq_sw1);
+  if(p.eq_sw2) sw+=rrow('Software 2',p.eq_sw2);
+  if(p.eq_ticket) sw+=rrow('Contrato Ricoh Ticket',p.eq_ticket);
+  if(p.eq_sw3) sw+=rrow('Otro software',p.eq_sw3);
+  return rrow('Comercial',p.c_nombre)+rrow('Empresa',p.c_empresa)+rrow('Teléfono',p.c_tel)+rrow('E-mail',p.c_email)+
+    '<div style="height:8px"></div>'+
+    rrow('Cliente',p.cl_empresa)+rrow('Dirección',p.cl_dir)+rrow('Teléfono cliente',p.cl_tel)+rrow('E-mail cliente',p.cl_email)+
+    '<div style="height:8px"></div>'+
+    rrow('Modelo',p.eq_modelo)+rrow('Controlador',p.eq_ctrl)+sw+
+    rrow('Account Number',p.eq_acc)+rrow('Nº Pedido Oracle',p.eq_oracle)+rrow('Nº Pedido Siebel',p.eq_siebel)+
+    rrow('Contador A3',p.contador)+
+    '<div style="height:8px"></div>'+
+    rrow('Conformidad cliente',p.disc==='1'?'Sí, conforme':'Pendiente de confirmar')+
+    (p.disc_com?rrow('Comentarios',p.disc_com):'');
 }
+
+function buildRoSATFromData(p){
+  var labels=['Impresora y controlador actualizados a la última versión','Impresora y controlador conectados a red','Conexión remota habilitada','Registro comprobado con ±1 mm de tolerancia desde todas las bandejas de producción','Conexión @Remote / TF Advisor activada con petición de tóner','Calidad con DQV superada','Máxima capacidad grapador / plegador comprobadas','Unidades de 5º color activadas y comprobadas','Formación cambio de 5º color realizada'];
+  var icons=['🔄','🌐','🔗','📐','📡','🎯','📎','🎨','🎓'];
+  var chks=p.chks||'000000000';
+  var completadas=0;
+  var filas=labels.map(function(txt,i){
+    var done=chks[i]==='1';
+    if(done) completadas++;
+    return '<div class="rrow"><span>'+(done?'✅':'⬜')+' '+icons[i]+' '+txt+'</span><span style="color:'+(done?'#3b6d11':'#a32d2d')+';">'+(done?'Realizado':'Pendiente')+'</span></div>';
+  }).join('');
+  return rrow('Técnico',p.tec_nombre)+rrow('Empresa',p.tec_empresa)+rrow('Teléfono',p.tec_tel)+rrow('E-mail',p.tec_email)+
+    '<div style="height:8px"></div>'+
+    '<div style="font-size:11px;color:#5f5e5a;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:6px;font-weight:500">Acciones ('+completadas+'/9 realizadas)</div>'+
+    filas+
+    '<div style="height:8px"></div>'+
+    rrow('IP Fiery',p.ip_fiery)+rrow('IP Máquina',p.ip_maq)+
+    (p.tec_com?rrow('Comentarios',p.tec_com):'');
+}
+
+window.onload=function(){
+  var p=getParams();
+
+  if(p.paso==='SAT'){
+    document.getElementById('view-comercial').style.display='none';
+    document.getElementById('view-sat').style.display='block';
+    document.getElementById('bar-sub').textContent='Paso 2 de 3 · Servicio Técnico (SAT)';
+    document.getElementById('ro-com-body').innerHTML=buildRoComercialFromData(p);
+    document.getElementById('btn-enviar-formador').onclick=function(){
+      var urlFormador=buildFormadorUrl(p);
+      var asunto=encodeURIComponent('Ricoh Checklist e-Training — Acción requerida: Formador HW/SW');
+      var cuerpo=encodeURIComponent('Estimado/a equipo de Formación HW/SW,\n\nEl Servicio Técnico ('+v('tec-nombre')+') ha completado su parte del Checklist e-Training para el siguiente cliente y equipo:\n\n  Cliente: '+p.cl_empresa+'\n  Modelo: '+p.eq_modelo+'\n\nPor favor, accede al siguiente enlace para cumplimentar la sección correspondiente al Formador HW/SW:\n\n  '+urlFormador+'\n\nGracias.\n');
+      window.location.href='mailto:RES_PREVENTA_RGC@ricoh.es?subject='+asunto+'&body='+cuerpo;
+    };
+    return;
+  }
+
+  if(p.paso==='FORMADOR'){
+    document.getElementById('view-comercial').style.display='none';
+    document.getElementById('view-formador').style.display='block';
+    document.getElementById('bar-sub').textContent='Paso 3 de 3 · Formador HW / SW';
+    document.getElementById('ro-com-body2').innerHTML=buildRoComercialFromData(p);
+    document.getElementById('ro-sat-body').innerHTML=buildRoSATFromData(p);
+    document.getElementById('btn-alta').onclick=function(){
+      var urlResumen=buildResumenUrl(p);
+      var asunto=encodeURIComponent('Ricoh Checklist e-Training — Alta en Ricoh Ticket: '+p.cl_empresa);
+      var cuerpo=encodeURIComponent(
+        'Estimado/a equipo,\n\nSe solicita alta en Ricoh Ticket para el siguiente cliente:\n\n'+
+        '  Nombre de cliente: '+p.cl_empresa+'\n'+
+        '  Modelo de máquina: '+p.eq_modelo+'\n'+
+        '  Nombre comercial responsable: '+p.c_nombre+'\n'+
+        '  Nombre técnico instalador: '+p.tec_nombre+'\n'+
+        '  Nombre formador: '+v('frm-nombre')+'\n'+
+        '  Comentarios: '+(p.tec_com||'Sin comentarios')+'\n\n'+
+        '📋 Accede al resumen completo del expediente:\n\n  '+urlResumen+'\n\nGracias.\n'
+      );
+      var dest='carlos.casado@ricoh.es;carlos.cano@ricoh.es;raquel.depaco@ricoh.es';
+      window.location.href='mailto:'+encodeURIComponent(dest)+'?subject='+asunto+'&body='+cuerpo;
+      setTimeout(function(){
+        document.getElementById('final-ok').style.display='block';
+        document.getElementById('btn-alta').disabled=true;
+        window.scrollTo(0,9999);
+      },500);
+    };
+    return;
+  }
+
+  if(p.paso==='RESUMEN'){
+    document.getElementById('view-comercial').style.display='none';
+    document.getElementById('view-resumen').style.display='block';
+    document.getElementById('bar-sub').textContent='Resumen del expediente';
+    document.getElementById('res-comercial').innerHTML=buildRoComercialFromData(p);
+    document.getElementById('res-sat').innerHTML=buildRoSATFromData(p);
+    document.getElementById('res-formador').innerHTML=
+      rrow('Formador',p.frm_nombre)+rrow('Teléfono',p.frm_tel)+rrow('E-mail',p.frm_email)+
+      '<div style="height:8px"></div>'+
+      rrow('Administrador',p.adm_nombre)+rrow('Teléfono admin',p.adm_tel)+rrow('E-mail admin',p.adm_email)+
+      '<div style="height:8px"></div>'+
+      rrow('Usuario',p.usr_nombre)+rrow('Teléfono usuario',p.usr_tel)+rrow('E-mail usuario',p.usr_email);
+    return;
+  }
+
+  document.getElementById('btn-enviar-sat').onclick=function(){
+    var urlSAT=buildSATUrl();
+    var asunto=encodeURIComponent('Ricoh Checklist e-Training — Acción requerida: Servicio Técnico');
+    var cuerpo=encodeURIComponent('Estimado/a equipo de Servicio Técnico,\n\nEl responsable comercial '+v('c-nombre')+' ha completado su parte del Checklist e-Training para el siguiente cliente y equipo:\n\n  Cliente: '+v('cl-empresa')+'\n  Modelo: '+v('eq-modelo')+'\n\nPor favor, accede al siguiente enlace para cumplimentar la sección correspondiente al Servicio Técnico (SAT):\n\n  '+urlSAT+'\n\n⚠️ IMPORTANTE: Adjunta a este correo la captura de pantalla de la configuración del pedido antes de enviarlo.\n\nGracias.\n');
+    window.location.href='mailto:pedro.lanza@ricoh.es?subject='+asunto+'&body='+cuerpo;
+  };
+};
 </script>
 </body>
 </html>
