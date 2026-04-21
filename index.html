@@ -61,6 +61,34 @@ body{font-family:Arial,sans-serif;background:#f5f5f3;color:#1a1a18}
   <div><h1>Ricoh Graphic Communications — Checklist e-Training</h1><p id="bar-sub">Paso 1 de 3 · Responsable Comercial</p></div>
 </div>
 
+<!-- CONFIRMACIÓN COMERCIAL -->
+<div id="view-confirmacion-comercial" style="display:none">
+  <div style="background:#eaf3de;border-radius:6px;padding:10px 14px;margin-bottom:1rem;display:flex;align-items:center;gap:8px;border:0.5px solid #c0dd97">
+    <span style="font-size:16px">✅</span>
+    <span style="font-size:13px;color:#274d0e;font-weight:500">Formulario enviado al SAT correctamente. Aquí tienes un resumen de lo que has enviado.</span>
+  </div>
+  <div class="ro-card">
+    <div class="card-title">Datos enviados por Comercial <span class="ro-badge">solo lectura</span></div>
+    <div id="conf-com-body"></div>
+  </div>
+</div>
+
+<!-- CONFIRMACIÓN SAT -->
+<div id="view-confirmacion-sat" style="display:none">
+  <div style="background:#eaf3de;border-radius:6px;padding:10px 14px;margin-bottom:1rem;display:flex;align-items:center;gap:8px;border:0.5px solid #c0dd97">
+    <span style="font-size:16px">✅</span>
+    <span style="font-size:13px;color:#274d0e;font-weight:500">Formulario enviado al Formador HW/SW correctamente. Aquí tienes un resumen de lo que se ha enviado.</span>
+  </div>
+  <div class="ro-card">
+    <div class="card-title">Datos del Comercial <span class="ro-badge">solo lectura</span></div>
+    <div id="conf-com-body2"></div>
+  </div>
+  <div class="ro-card">
+    <div class="card-title">Datos del SAT <span class="ro-badge sat">solo lectura</span></div>
+    <div id="conf-sat-body"></div>
+  </div>
+</div>
+
 <!-- RESUMEN -->
 <div id="view-resumen" style="display:none">
   <div style="background:#1a3a5c;border-radius:6px;padding:10px 14px;margin-bottom:1rem;display:flex;align-items:center;gap:8px">
@@ -495,6 +523,14 @@ function enviarASAT(){
     '⚠️ IMPORTANTE: Adjunta a este correo la captura de pantalla de la configuración del pedido antes de enviarlo.\n\nGracias.\n'
   );
   window.location.href='mailto:pedro.lanza@ricoh.es?subject='+asunto+'&body='+cuerpo;
+
+  var p=buildComercialData();
+  setTimeout(function(){
+    document.getElementById('view-comercial').style.display='none';
+    document.getElementById('view-confirmacion-comercial').style.display='block';
+    document.getElementById('bar-sub').textContent='✓ Enviado — Vista de confirmación Comercial';
+    document.getElementById('conf-com-body').innerHTML=buildRoComercialFromData(p);
+  },500);
 }
 
 function enviarAFormador(){
@@ -510,12 +546,74 @@ function enviarAFormador(){
     '  '+urlFormador+'\n\nGracias.\n'
   );
   window.location.href='mailto:RES_PREVENTA_RGC@ricoh.es?subject='+asunto+'&body='+cuerpo;
+
+  setTimeout(function(){
+    document.getElementById('view-sat').style.display='none';
+    document.getElementById('view-confirmacion-sat').style.display='block';
+    document.getElementById('bar-sub').textContent='✓ Enviado — Vista de confirmación SAT';
+    document.getElementById('conf-com-body2').innerHTML=buildRoComercialFromData(p);
+    document.getElementById('conf-sat-body').innerHTML=buildRoSATFromData(Object.assign({},p,{
+      tec_nombre:v('tec-nombre'),tec_empresa:v('tec-empresa'),tec_tel:v('tec-tel'),tec_email:v('tec-email'),
+      ip_fiery:v('sat-ip-fiery'),ip_maq:v('sat-ip-maq'),tec_com:v('tec-comentario'),
+      chks:(function(){var s='';for(var i=0;i<9;i++){var e=document.getElementById('chk'+i);s+=(e&&e.checked)?'1':'0';}return s;})()
+    }));
+  },500);
 }
 
 function cerrarExpediente(){
   var p=window._params||getParams();
   var urlResumen=buildResumenUrl(p);
-  var asunto=encodeURIComponent('Ricoh Checklist e-Training — Alta en Ricoh Ticket: '+(p.cl_empresa||v('cl-empresa')));
+
+  var POWER_AUTOMATE_URL='PEGA_AQUI_LA_URL_DE_POWER_AUTOMATE';
+
+  var datos={
+    cliente: p.cl_empresa||'',
+    modelo: p.eq_modelo||'',
+    controlador: p.eq_ctrl||'',
+    comercial: p.c_nombre||'',
+    comercial_empresa: p.c_empresa||'',
+    comercial_email: p.c_email||'',
+    cliente_direccion: p.cl_dir||'',
+    cliente_tel: p.cl_tel||'',
+    cliente_email: p.cl_email||'',
+    eq_acc: p.eq_acc||'',
+    eq_oracle: p.eq_oracle||'',
+    eq_siebel: p.eq_siebel||'',
+    sw1: p.eq_sw1||'',
+    sw2: p.eq_sw2||'',
+    contrato_ticket: p.eq_ticket||'',
+    otro_sw: p.eq_sw3||'',
+    contador_a3: p.contador||'',
+    conformidad: p.disc==='1'?'Sí, conforme':'Pendiente de confirmar',
+    conformidad_com: p.disc_com||'',
+    tecnico: p.tec_nombre||'',
+    tecnico_empresa: p.tec_empresa||'',
+    tecnico_email: p.tec_email||'',
+    ip_fiery: p.ip_fiery||'',
+    ip_maquina: p.ip_maq||'',
+    tec_comentarios: p.tec_com||'',
+    chks: p.chks||'000000000',
+    formador: v('frm-nombre'),
+    formador_email: v('frm-email'),
+    adm_nombre: v('adm-nombre'),
+    adm_tel: v('adm-tel'),
+    adm_email: v('adm-email'),
+    usr_nombre: v('usr-nombre'),
+    usr_tel: v('usr-tel'),
+    usr_email: v('usr-email')
+  };
+
+  if(POWER_AUTOMATE_URL!=='PEGA_AQUI_LA_URL_DE_POWER_AUTOMATE'){
+    fetch(POWER_AUTOMATE_URL,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(datos)
+    })
+    .then(function(){console.log('Expediente guardado en SharePoint');})
+    .catch(function(e){console.error('Error al guardar:',e);});
+  }
+
+  var asunto=encodeURIComponent('Ricoh Checklist e-Training — Alta en Ricoh Ticket: '+(p.cl_empresa||''));
   var cuerpo=encodeURIComponent(
     'Estimado/a equipo,\n\nSe solicita alta en Ricoh Ticket para el siguiente cliente:\n\n'+
     '  Nombre de cliente: '+(p.cl_empresa||'')+'\n'+
