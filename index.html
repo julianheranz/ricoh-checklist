@@ -221,7 +221,7 @@ body{font-family:Arial,sans-serif;background:#f5f5f3;color:#1a1a18}
   </div>
 
   <div class="btn-row">
-    <button class="btn primary" id="btn-enviar-sat">✉ Enviar a SAT →</button>
+    <button class="btn primary" onclick="enviarASAT()">✉ Enviar a SAT →</button>
   </div>
 </div>
 
@@ -269,7 +269,7 @@ body{font-family:Arial,sans-serif;background:#f5f5f3;color:#1a1a18}
   </div>
 
   <div class="btn-row">
-    <button class="btn primary" id="btn-enviar-formador">✉ Enviar a Formador HW/SW →</button>
+    <button class="btn primary" onclick="enviarAFormador()">✉ Enviar a Formador HW/SW →</button>
   </div>
 </div>
 
@@ -313,7 +313,7 @@ body{font-family:Arial,sans-serif;background:#f5f5f3;color:#1a1a18}
   </div>
 
   <div class="btn-row">
-    <button class="btn primary" id="btn-alta">✓ Alta en Ricoh Ticket</button>
+    <button class="btn primary" onclick="cerrarExpediente()">✓ Alta en Ricoh Ticket</button>
   </div>
   <div class="final-ok" id="final-ok">✓ Alta en Ricoh Ticket solicitada correctamente. Se ha notificado a los destinatarios.</div>
 </div>
@@ -448,51 +448,25 @@ function buildRoSATFromData(p){
 
 window.onload=function(){
   var p=getParams();
+  if(!p.paso) return;
 
   if(p.paso==='SAT'){
     document.getElementById('view-comercial').style.display='none';
     document.getElementById('view-sat').style.display='block';
     document.getElementById('bar-sub').textContent='Paso 2 de 3 · Servicio Técnico (SAT)';
     document.getElementById('ro-com-body').innerHTML=buildRoComercialFromData(p);
-    document.getElementById('btn-enviar-formador').onclick=function(){
-      var urlFormador=buildFormadorUrl(p);
-      var asunto=encodeURIComponent('Ricoh Checklist e-Training — Acción requerida: Formador HW/SW');
-      var cuerpo=encodeURIComponent('Estimado/a equipo de Formación HW/SW,\n\nEl Servicio Técnico ('+v('tec-nombre')+') ha completado su parte del Checklist e-Training para el siguiente cliente y equipo:\n\n  Cliente: '+p.cl_empresa+'\n  Modelo: '+p.eq_modelo+'\n\nPor favor, accede al siguiente enlace para cumplimentar la sección correspondiente al Formador HW/SW:\n\n  '+urlFormador+'\n\nGracias.\n');
-      window.location.href='mailto:RES_PREVENTA_RGC@ricoh.es?subject='+asunto+'&body='+cuerpo;
-    };
+    window._params=p;
     return;
   }
-
   if(p.paso==='FORMADOR'){
     document.getElementById('view-comercial').style.display='none';
     document.getElementById('view-formador').style.display='block';
     document.getElementById('bar-sub').textContent='Paso 3 de 3 · Formador HW / SW';
     document.getElementById('ro-com-body2').innerHTML=buildRoComercialFromData(p);
     document.getElementById('ro-sat-body').innerHTML=buildRoSATFromData(p);
-    document.getElementById('btn-alta').onclick=function(){
-      var urlResumen=buildResumenUrl(p);
-      var asunto=encodeURIComponent('Ricoh Checklist e-Training — Alta en Ricoh Ticket: '+p.cl_empresa);
-      var cuerpo=encodeURIComponent(
-        'Estimado/a equipo,\n\nSe solicita alta en Ricoh Ticket para el siguiente cliente:\n\n'+
-        '  Nombre de cliente: '+p.cl_empresa+'\n'+
-        '  Modelo de máquina: '+p.eq_modelo+'\n'+
-        '  Nombre comercial responsable: '+p.c_nombre+'\n'+
-        '  Nombre técnico instalador: '+p.tec_nombre+'\n'+
-        '  Nombre formador: '+v('frm-nombre')+'\n'+
-        '  Comentarios: '+(p.tec_com||'Sin comentarios')+'\n\n'+
-        '📋 Accede al resumen completo del expediente:\n\n  '+urlResumen+'\n\nGracias.\n'
-      );
-      var dest='carlos.casado@ricoh.es;carlos.cano@ricoh.es;raquel.depaco@ricoh.es';
-      window.location.href='mailto:'+encodeURIComponent(dest)+'?subject='+asunto+'&body='+cuerpo;
-      setTimeout(function(){
-        document.getElementById('final-ok').style.display='block';
-        document.getElementById('btn-alta').disabled=true;
-        window.scrollTo(0,9999);
-      },500);
-    };
+    window._params=p;
     return;
   }
-
   if(p.paso==='RESUMEN'){
     document.getElementById('view-comercial').style.display='none';
     document.getElementById('view-resumen').style.display='block';
@@ -505,16 +479,61 @@ window.onload=function(){
       rrow('Administrador',p.adm_nombre)+rrow('Teléfono admin',p.adm_tel)+rrow('E-mail admin',p.adm_email)+
       '<div style="height:8px"></div>'+
       rrow('Usuario',p.usr_nombre)+rrow('Teléfono usuario',p.usr_tel)+rrow('E-mail usuario',p.usr_email);
-    return;
   }
-
-  document.getElementById('btn-enviar-sat').onclick=function(){
-    var urlSAT=buildSATUrl();
-    var asunto=encodeURIComponent('Ricoh Checklist e-Training — Acción requerida: Servicio Técnico');
-    var cuerpo=encodeURIComponent('Estimado/a equipo de Servicio Técnico,\n\nEl responsable comercial '+v('c-nombre')+' ha completado su parte del Checklist e-Training para el siguiente cliente y equipo:\n\n  Cliente: '+v('cl-empresa')+'\n  Modelo: '+v('eq-modelo')+'\n\nPor favor, accede al siguiente enlace para cumplimentar la sección correspondiente al Servicio Técnico (SAT):\n\n  '+urlSAT+'\n\n⚠️ IMPORTANTE: Adjunta a este correo la captura de pantalla de la configuración del pedido antes de enviarlo.\n\nGracias.\n');
-    window.location.href='mailto:pedro.lanza@ricoh.es?subject='+asunto+'&body='+cuerpo;
-  };
 };
+
+function enviarASAT(){
+  var urlSAT=buildSATUrl();
+  var asunto=encodeURIComponent('Ricoh Checklist e-Training — Acción requerida: Servicio Técnico');
+  var cuerpo=encodeURIComponent(
+    'Estimado/a equipo de Servicio Técnico,\n\n'+
+    'El responsable comercial '+v('c-nombre')+' ha completado su parte del Checklist e-Training para el siguiente cliente y equipo:\n\n'+
+    '  Cliente: '+v('cl-empresa')+'\n'+
+    '  Modelo: '+v('eq-modelo')+'\n\n'+
+    'Por favor, accede al siguiente enlace para cumplimentar la sección correspondiente al Servicio Técnico (SAT):\n\n'+
+    '  '+urlSAT+'\n\n'+
+    '⚠️ IMPORTANTE: Adjunta a este correo la captura de pantalla de la configuración del pedido antes de enviarlo.\n\nGracias.\n'
+  );
+  window.location.href='mailto:pedro.lanza@ricoh.es?subject='+asunto+'&body='+cuerpo;
+}
+
+function enviarAFormador(){
+  var p=window._params||getParams();
+  var urlFormador=buildFormadorUrl(p);
+  var asunto=encodeURIComponent('Ricoh Checklist e-Training — Acción requerida: Formador HW/SW');
+  var cuerpo=encodeURIComponent(
+    'Estimado/a equipo de Formación HW/SW,\n\n'+
+    'El Servicio Técnico ('+v('tec-nombre')+') ha completado su parte del Checklist e-Training para el siguiente cliente y equipo:\n\n'+
+    '  Cliente: '+(p.cl_empresa||'')+'\n'+
+    '  Modelo: '+(p.eq_modelo||'')+'\n\n'+
+    'Por favor, accede al siguiente enlace para cumplimentar la sección correspondiente al Formador HW/SW:\n\n'+
+    '  '+urlFormador+'\n\nGracias.\n'
+  );
+  window.location.href='mailto:RES_PREVENTA_RGC@ricoh.es?subject='+asunto+'&body='+cuerpo;
+}
+
+function cerrarExpediente(){
+  var p=window._params||getParams();
+  var urlResumen=buildResumenUrl(p);
+  var asunto=encodeURIComponent('Ricoh Checklist e-Training — Alta en Ricoh Ticket: '+(p.cl_empresa||v('cl-empresa')));
+  var cuerpo=encodeURIComponent(
+    'Estimado/a equipo,\n\nSe solicita alta en Ricoh Ticket para el siguiente cliente:\n\n'+
+    '  Nombre de cliente: '+(p.cl_empresa||'')+'\n'+
+    '  Modelo de máquina: '+(p.eq_modelo||'')+'\n'+
+    '  Nombre comercial responsable: '+(p.c_nombre||'')+'\n'+
+    '  Nombre técnico instalador: '+(p.tec_nombre||'')+'\n'+
+    '  Nombre formador: '+v('frm-nombre')+'\n'+
+    '  Comentarios: '+(p.tec_com||'Sin comentarios')+'\n\n'+
+    '📋 Accede al resumen completo del expediente:\n\n  '+urlResumen+'\n\nGracias.\n'
+  );
+  var dest='carlos.casado@ricoh.es;carlos.cano@ricoh.es;raquel.depaco@ricoh.es';
+  window.location.href='mailto:'+encodeURIComponent(dest)+'?subject='+asunto+'&body='+cuerpo;
+  setTimeout(function(){
+    document.getElementById('final-ok').style.display='block';
+    document.querySelector('#view-formador .btn.primary').disabled=true;
+    window.scrollTo(0,9999);
+  },500);
+}
 </script>
 </body>
 </html>
