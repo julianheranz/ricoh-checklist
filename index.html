@@ -332,12 +332,29 @@ function buildRoComercial(){
 }
 
 function buildRoSAT(){
-  var chks=[];
-  for(var i=0;i<9;i++){var el=document.getElementById('chk'+i);if(el&&el.checked)chks.push(el.nextElementSibling.nextElementSibling.textContent);}
+  var items=[
+    {id:'chk0',icon:'🔄',txt:'Impresora y controlador actualizados a la última versión'},
+    {id:'chk1',icon:'🌐',txt:'Impresora y controlador conectados a red'},
+    {id:'chk2',icon:'🔗',txt:'Conexión remota habilitada'},
+    {id:'chk3',icon:'📐',txt:'Registro comprobado con ±1 mm de tolerancia desde todas las bandejas de producción'},
+    {id:'chk4',icon:'📡',txt:'Conexión @Remote / TF Advisor activada con petición de tóner'},
+    {id:'chk5',icon:'🎯',txt:'Calidad con DQV superada'},
+    {id:'chk6',icon:'📎',txt:'Máxima capacidad grapador / plegador comprobadas'},
+    {id:'chk7',icon:'🎨',txt:'Unidades de 5º color activadas y comprobadas'},
+    {id:'chk8',icon:'🎓',txt:'Formación cambio de 5º color realizada'}
+  ];
+  var completadas=0;
+  var filas=items.map(function(item){
+    var el=document.getElementById(item.id);
+    var checked=el&&el.checked;
+    if(checked) completadas++;
+    var tick=checked?'✅':'⬜';
+    return '<div class="rrow"><span>'+tick+' '+item.icon+' '+item.txt+'</span><span style="color:'+(checked?'#3b6d11':'#a32d2d')+';">'+(checked?'Realizado':'Pendiente')+'</span></div>';
+  }).join('');
   return rrow('Técnico',v('tec-nombre'))+rrow('Empresa',v('tec-empresa'))+rrow('Teléfono',v('tec-tel'))+rrow('E-mail',v('tec-email'))+
     '<div style="height:8px"></div>'+
-    '<div style="font-size:11px;color:#5f5e5a;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:6px;font-weight:500">Acciones completadas ('+chks.length+'/9)</div>'+
-    chks.map(function(t){return '<div class="chk-done">✓ '+t+'</div>';}).join('')+
+    '<div style="font-size:11px;color:#5f5e5a;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:6px;font-weight:500">Acciones ('+completadas+'/9 realizadas)</div>'+
+    filas+
     '<div style="height:8px"></div>'+
     rrow('IP Fiery',v('sat-ip-fiery'))+rrow('IP Máquina',v('sat-ip-maq'))+
     (v('tec-comentario')!=='—'?rrow('Comentarios',v('tec-comentario')):'');
@@ -355,9 +372,11 @@ function handleImg(inp){
   r.readAsDataURL(f);
 }
 
+var URL_FORMULARIO='https://julianheranz.github.io/ricoh-checklist';
+
 function enviarASAT(){
   var asunto=encodeURIComponent('Ricoh Checklist e-Training — Acción requerida: Servicio Técnico');
-  var cuerpo=encodeURIComponent('Estimado/a equipo de Servicio Técnico,\n\nEl responsable comercial '+v('c-nombre')+' ha completado su parte del Checklist e-Training para el siguiente cliente y equipo:\n\n  Cliente: '+v('cl-empresa')+'\n  Modelo: '+v('eq-modelo')+'\n\nPor favor, accede al formulario para cumplimentar la sección correspondiente al Servicio Técnico (SAT).\n\nGracias.\n');
+  var cuerpo=encodeURIComponent('Estimado/a equipo de Servicio Técnico,\n\nEl responsable comercial '+v('c-nombre')+' ha completado su parte del Checklist e-Training para el siguiente cliente y equipo:\n\n  Cliente: '+v('cl-empresa')+'\n  Modelo: '+v('eq-modelo')+'\n\nPor favor, accede al siguiente enlace para cumplimentar la sección correspondiente al Servicio Técnico (SAT):\n\n  '+URL_FORMULARIO+'\n\nGracias.\n');
   window.location.href='mailto:pedro.lanza@ricoh.es?subject='+asunto+'&body='+cuerpo;
   setTimeout(function(){
     document.getElementById('view-comercial').style.display='none';
@@ -370,7 +389,7 @@ function enviarASAT(){
 
 function enviarAFormador(){
   var asunto=encodeURIComponent('Ricoh Checklist e-Training — Acción requerida: Formador HW/SW');
-  var cuerpo=encodeURIComponent('Estimado/a equipo de Formación HW/SW,\n\nEl Servicio Técnico ('+v('tec-nombre')+') ha completado su parte del Checklist e-Training para el siguiente cliente y equipo:\n\n  Cliente: '+v('cl-empresa')+'\n  Modelo: '+v('eq-modelo')+'\n\nPor favor, accede al formulario para cumplimentar la sección correspondiente al Formador HW/SW.\n\nGracias.\n');
+  var cuerpo=encodeURIComponent('Estimado/a equipo de Formación HW/SW,\n\nEl Servicio Técnico ('+v('tec-nombre')+') ha completado su parte del Checklist e-Training para el siguiente cliente y equipo:\n\n  Cliente: '+v('cl-empresa')+'\n  Modelo: '+v('eq-modelo')+'\n\nPor favor, accede al siguiente enlace para cumplimentar la sección correspondiente al Formador HW/SW:\n\n  '+URL_FORMULARIO+'\n\nGracias.\n');
   window.location.href='mailto:RES_PREVENTA_RGC@ricoh.es?subject='+asunto+'&body='+cuerpo;
   setTimeout(function(){
     document.getElementById('view-sat').style.display='none';
