@@ -48,11 +48,12 @@ body{font-family:Arial,sans-serif;background:#f5f5f3;color:#1a1a18}
 .btn:hover{background:#f5f5f3}
 .btn.primary{background:#1a3a5c;color:#fff;border-color:#1a3a5c}
 .btn.primary:hover{background:#152e4a}
-.img-drop{border:1.5px dashed #b4b2a9;border-radius:6px;height:80px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:5px;cursor:pointer;color:#888780;font-size:13px}
-.img-drop:hover{border-color:#185fa5;color:#185fa5;background:#e6f1fb}
 .final-ok{padding:16px;background:#eaf3de;border-radius:6px;font-size:13px;color:#274d0e;text-align:center;margin-top:1rem;display:none}
 .chk-done{font-size:12px;color:#1a1a18;padding:3px 0;border-bottom:0.5px solid #d9d9d5}
 .info-hint{font-size:11px;color:#5f5e5a;margin-top:4px;line-height:1.5}
+.warning-box{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;background:#faeeda;border-radius:6px;border:0.5px solid #fac775}
+.warning-box span.icon{font-size:18px;flex-shrink:0}
+.warning-box span.txt{font-size:13px;color:#633806;line-height:1.6}
 </style>
 </head>
 <body>
@@ -60,6 +61,26 @@ body{font-family:Arial,sans-serif;background:#f5f5f3;color:#1a1a18}
 <div class="topbar">
   <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect width="28" height="28" rx="6" fill="#ffffff22"/><rect x="4" y="9" width="20" height="12" rx="2" stroke="#fff" stroke-width="1.4"/><path d="M8 9V7a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2" stroke="#fff" stroke-width="1.3"/><circle cx="21" cy="14" r="1" fill="#fff"/><rect x="8" y="16" width="12" height="5" rx="1" fill="#ffffff33" stroke="#fff" stroke-width="1"/></svg>
   <div><h1>Ricoh Graphic Communications — Checklist e-Training</h1><p id="bar-sub">Paso 1 de 3 · Responsable Comercial</p></div>
+</div>
+
+<!-- RESUMEN COMPLETO -->
+<div id="view-resumen" style="display:none">
+  <div style="background:#1a3a5c;border-radius:6px;padding:10px 14px;margin-bottom:1rem;display:flex;align-items:center;gap:8px">
+    <span style="font-size:16px">📋</span>
+    <span style="font-size:13px;color:#fff;font-weight:500">Resumen completo del expediente — Solo lectura</span>
+  </div>
+  <div class="ro-card">
+    <div class="card-title">Datos del Comercial <span class="ro-badge">solo lectura</span></div>
+    <div id="res-comercial"></div>
+  </div>
+  <div class="ro-card">
+    <div class="card-title">Datos del SAT <span class="ro-badge sat">solo lectura</span></div>
+    <div id="res-sat"></div>
+  </div>
+  <div class="ro-card">
+    <div class="card-title">Datos del Formador <span class="ro-badge" style="background:#faeeda;color:#633806">solo lectura</span></div>
+    <div id="res-formador"></div>
+  </div>
 </div>
 
 <!-- PASO 1: COMERCIAL -->
@@ -195,9 +216,9 @@ body{font-family:Arial,sans-serif;background:#f5f5f3;color:#1a1a18}
   </div>
 
   <div class="card">
-    <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:#faeeda;border-radius:6px;border:0.5px solid #fac775;">
-      <span style="font-size:18px;flex-shrink:0">⚠️</span>
-      <span style="font-size:13px;color:#633806;line-height:1.6"><strong>IMPORTANTE:</strong> Adjunta a este correo la captura de pantalla de la configuración del pedido antes de enviarlo.</span>
+    <div class="warning-box">
+      <span class="icon">⚠️</span>
+      <span class="txt"><strong>IMPORTANTE:</strong> Adjunta a este correo la captura de pantalla de la configuración del pedido antes de enviarlo.</span>
     </div>
   </div>
 
@@ -303,71 +324,11 @@ body{font-family:Arial,sans-serif;background:#f5f5f3;color:#1a1a18}
 
 <script>
 var imgData=null;
+
+window.onload=function(){cargarDesdeURL();};
+
 function v(id){var el=document.getElementById(id);return el?(el.value.trim()||'—'):'—';}
 function rrow(lbl,val){return '<div class="rrow"><span>'+lbl+'</span><span>'+val+'</span></div>';}
-
-function buildRoComercial(){
-  var sw='';
-  if(v('eq-sw1')!=='—') sw+=rrow('Software 1',v('eq-sw1'));
-  if(v('eq-sw2')!=='—') sw+=rrow('Software 2',v('eq-sw2'));
-  if(v('eq-contrato-ticket')!=='—') sw+=rrow('Contrato Ricoh Ticket',v('eq-contrato-ticket'));
-  if(v('eq-sw3')!=='—') sw+=rrow('Otro software',v('eq-sw3'));
-  var disc=document.getElementById('disclaimer-check');
-  var discVal=disc&&disc.checked?'Sí, conforme':'Pendiente de confirmar';
-  return rrow('Comercial',v('c-nombre'))+rrow('Empresa',v('c-empresa'))+rrow('Teléfono',v('c-tel'))+rrow('E-mail',v('c-email'))+
-    '<div style="height:8px"></div>'+
-    rrow('Cliente',v('cl-empresa'))+rrow('Dirección',v('cl-dir'))+rrow('Teléfono cliente',v('cl-tel'))+rrow('E-mail cliente',v('cl-email'))+
-    '<div style="height:8px"></div>'+
-    rrow('Modelo',v('eq-modelo'))+rrow('Controlador',v('eq-ctrl'))+sw+
-    rrow('Account Number',v('eq-acc'))+rrow('Nº Pedido Oracle',v('eq-oracle'))+rrow('Nº Pedido Siebel',v('eq-siebel'))+
-    rrow('Contador A3',v('contador'))+
-    '<div style="height:8px"></div>'+
-    rrow('Conformidad cliente',discVal)+
-    (v('disclaimer-comentario')!=='—'?rrow('Comentarios',v('disclaimer-comentario')):'');
-}
-
-function buildRoSAT(){
-  var items=[
-    {id:'chk0',icon:'🔄',txt:'Impresora y controlador actualizados a la última versión'},
-    {id:'chk1',icon:'🌐',txt:'Impresora y controlador conectados a red'},
-    {id:'chk2',icon:'🔗',txt:'Conexión remota habilitada'},
-    {id:'chk3',icon:'📐',txt:'Registro comprobado con ±1 mm de tolerancia desde todas las bandejas de producción'},
-    {id:'chk4',icon:'📡',txt:'Conexión @Remote / TF Advisor activada con petición de tóner'},
-    {id:'chk5',icon:'🎯',txt:'Calidad con DQV superada'},
-    {id:'chk6',icon:'📎',txt:'Máxima capacidad grapador / plegador comprobadas'},
-    {id:'chk7',icon:'🎨',txt:'Unidades de 5º color activadas y comprobadas'},
-    {id:'chk8',icon:'🎓',txt:'Formación cambio de 5º color realizada'}
-  ];
-  var completadas=0;
-  var filas=items.map(function(item){
-    var el=document.getElementById(item.id);
-    var checked=el&&el.checked;
-    if(checked) completadas++;
-    var tick=checked?'✅':'⬜';
-    return '<div class="rrow"><span>'+tick+' '+item.icon+' '+item.txt+'</span><span style="color:'+(checked?'#3b6d11':'#a32d2d')+';">'+(checked?'Realizado':'Pendiente')+'</span></div>';
-  }).join('');
-  return rrow('Técnico',v('tec-nombre'))+rrow('Empresa',v('tec-empresa'))+rrow('Teléfono',v('tec-tel'))+rrow('E-mail',v('tec-email'))+
-    '<div style="height:8px"></div>'+
-    '<div style="font-size:11px;color:#5f5e5a;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:6px;font-weight:500">Acciones ('+completadas+'/9 realizadas)</div>'+
-    filas+
-    '<div style="height:8px"></div>'+
-    rrow('IP Fiery',v('sat-ip-fiery'))+rrow('IP Máquina',v('sat-ip-maq'))+
-    (v('tec-comentario')!=='—'?rrow('Comentarios',v('tec-comentario')):'');
-}
-
-function handleImg(inp){
-  var f=inp.files[0];if(!f)return;
-  var r=new FileReader();
-  r.onload=function(e){
-    imgData=e.target.result;
-    document.getElementById('img-label').textContent='✓ '+f.name;
-    document.getElementById('img-preview').src=imgData;
-    document.getElementById('img-preview-wrap').style.display='block';
-  };
-  r.readAsDataURL(f);
-}
-
-var URL_FORMULARIO='https://julianheranz.github.io/ricoh-checklist/';
 
 function getParams(){
   var p={};
@@ -375,65 +336,52 @@ function getParams(){
   return p;
 }
 
-function buildSATUrl(){
-  var params={
-    paso:'SAT',
-    c_nombre:v('c-nombre'),c_empresa:v('c-empresa'),c_tel:v('c-tel'),c_email:v('c-email'),
-    cl_empresa:v('cl-empresa'),cl_dir:v('cl-dir'),cl_tel:v('cl-tel'),cl_email:v('cl-email'),
-    eq_acc:v('eq-acc'),eq_oracle:v('eq-oracle'),eq_siebel:v('eq-siebel'),
-    eq_modelo:v('eq-modelo'),eq_ctrl:v('eq-ctrl'),
-    eq_sw1:v('eq-sw1'),eq_sw2:v('eq-sw2'),eq_ticket:v('eq-contrato-ticket'),eq_sw3:v('eq-sw3'),
-    contador:v('contador'),
-    disc:document.getElementById('disclaimer-check').checked?'1':'0',
-    disc_com:v('disclaimer-comentario')
-  };
-  var qs=Object.keys(params).map(function(k){return encodeURIComponent(k)+'='+encodeURIComponent(params[k]);}).join('&');
-  return URL_FORMULARIO+'?'+qs;
-}
-
-function buildFormadorUrl(satUrl){
-  var base=satUrl||window.location.href;
-  var extra='&paso=FORMADOR'+
-    '&tec_nombre='+encodeURIComponent(v('tec-nombre'))+
-    '&tec_empresa='+encodeURIComponent(v('tec-empresa'))+
-    '&tec_tel='+encodeURIComponent(v('tec-tel'))+
-    '&tec_email='+encodeURIComponent(v('tec-email'))+
-    '&ip_fiery='+encodeURIComponent(v('sat-ip-fiery'))+
-    '&ip_maq='+encodeURIComponent(v('sat-ip-maq'))+
-    '&tec_com='+encodeURIComponent(v('tec-comentario'));
-  var chks='';
-  for(var i=0;i<9;i++){var el=document.getElementById('chk'+i);chks+=(el&&el.checked?'1':'0');}
-  extra+='&chks='+chks;
-  var base2=base.replace(/&paso=(SAT|FORMADOR)/,'');
-  return base2+extra;
-}
-
 function cargarDesdeURL(){
   var p=getParams();
   if(!p.paso) return;
-
-  if(p.paso==='SAT'||p.paso==='FORMADOR'){
-    var datosComercial={
-      'c-nombre':p.c_nombre||'','c-empresa':p.c_empresa||'','c-tel':p.c_tel||'','c-email':p.c_email||'',
-      'cl-empresa':p.cl_empresa||'','cl-dir':p.cl_dir||'','cl-tel':p.cl_tel||'','cl-email':p.cl_email||'',
-      'eq-acc':p.eq_acc||'','eq-oracle':p.eq_oracle||'','eq-siebel':p.eq_siebel||'',
-      'eq-modelo':p.eq_modelo||'','eq-ctrl':p.eq_ctrl||'',
-      'eq-sw1':p.eq_sw1||'','eq-sw2':p.eq_sw2||'','eq-contrato-ticket':p.eq_ticket||'','eq-sw3':p.eq_sw3||'',
-      'contador':p.contador||'','disclaimer-comentario':p.disc_com||''
-    };
-    window._datosComercial=datosComercial;
-    window._discCheck=p.disc==='1';
-  }
+  var d={
+    'c-nombre':p.c_nombre||'','c-empresa':p.c_empresa||'','c-tel':p.c_tel||'','c-email':p.c_email||'',
+    'cl-empresa':p.cl_empresa||'','cl-dir':p.cl_dir||'','cl-tel':p.cl_tel||'','cl-email':p.cl_email||'',
+    'eq-acc':p.eq_acc||'','eq-oracle':p.eq_oracle||'','eq-siebel':p.eq_siebel||'',
+    'eq-modelo':p.eq_modelo||'','eq-ctrl':p.eq_ctrl||'',
+    'eq-sw1':p.eq_sw1||'','eq-sw2':p.eq_sw2||'','eq-contrato-ticket':p.eq_ticket||'','eq-sw3':p.eq_sw3||'',
+    'contador':p.contador||'','disclaimer-comentario':p.disc_com||''
+  };
+  window._datosComercial=d;
+  window._discCheck=p.disc==='1';
 
   if(p.paso==='SAT'){
     document.getElementById('view-comercial').style.display='none';
     document.getElementById('view-sat').style.display='block';
     document.getElementById('bar-sub').textContent='Paso 2 de 3 · Servicio Técnico (SAT)';
-    document.getElementById('ro-com-body').innerHTML=buildRoComercialFromData(datosComercial,p.disc==='1',p.disc_com||'');
+    document.getElementById('ro-com-body').innerHTML=buildRoComercialFromData(d,p.disc==='1',p.disc_com||'');
   }
-
-  if(p.paso==='FORMADOR'){
-    var datosComercial2=window._datosComercial||{};
+  if(p.paso==='RESUMEN'){
+    document.getElementById('view-comercial').style.display='none';
+    document.getElementById('view-resumen').style.display='block';
+    document.getElementById('bar-sub').textContent='Resumen del expediente';
+    var d2={
+      'c-nombre':p.c_nombre||'—','c-empresa':p.c_empresa||'—','c-tel':p.c_tel||'—','c-email':p.c_email||'—',
+      'cl-empresa':p.cl_empresa||'—','cl-dir':p.cl_dir||'—','cl-tel':p.cl_tel||'—','cl-email':p.cl_email||'—',
+      'eq-acc':p.eq_acc||'—','eq-oracle':p.eq_oracle||'—','eq-siebel':p.eq_siebel||'—',
+      'eq-modelo':p.eq_modelo||'—','eq-ctrl':p.eq_ctrl||'—',
+      'eq-sw1':p.eq_sw1||'—','eq-sw2':p.eq_sw2||'—','eq-contrato-ticket':p.eq_ticket||'—','eq-sw3':p.eq_sw3||'—',
+      'contador':p.contador||'—','disclaimer-comentario':p.disc_com||'—'
+    };
+    var datosSAT2={
+      'tec-nombre':p.tec_nombre||'—','tec-empresa':p.tec_empresa||'—','tec-tel':p.tec_tel||'—','tec-email':p.tec_email||'—',
+      'sat-ip-fiery':p.ip_fiery||'—','sat-ip-maq':p.ip_maq||'—','tec-comentario':p.tec_com||'—',
+      chks:p.chks||'000000000'
+    };
+    document.getElementById('res-comercial').innerHTML=buildRoComercialFromData(d2,p.disc==='1',p.disc_com||'');
+    document.getElementById('res-sat').innerHTML=buildRoSATFromData(datosSAT2);
+    document.getElementById('res-formador').innerHTML=
+      rrow('Formador',p.frm_nombre||'—')+rrow('Teléfono',p.frm_tel||'—')+rrow('E-mail',p.frm_email||'—')+
+      '<div style="height:8px"></div>'+
+      rrow('Administrador',p.adm_nombre||'—')+rrow('Teléfono admin',p.adm_tel||'—')+rrow('E-mail admin',p.adm_email||'—')+
+      '<div style="height:8px"></div>'+
+      rrow('Usuario',p.usr_nombre||'—')+rrow('Teléfono usuario',p.usr_tel||'—')+rrow('E-mail usuario',p.usr_email||'—');
+  }
     var datosSAT={
       'tec-nombre':p.tec_nombre||'','tec-empresa':p.tec_empresa||'','tec-tel':p.tec_tel||'','tec-email':p.tec_email||'',
       'sat-ip-fiery':p.ip_fiery||'','sat-ip-maq':p.ip_maq||'','tec-comentario':p.tec_com||'',
@@ -442,9 +390,22 @@ function cargarDesdeURL(){
     document.getElementById('view-comercial').style.display='none';
     document.getElementById('view-formador').style.display='block';
     document.getElementById('bar-sub').textContent='Paso 3 de 3 · Formador HW / SW';
-    document.getElementById('ro-com-body2').innerHTML=buildRoComercialFromData(datosComercial2,p.disc==='1',p.disc_com||'');
+    document.getElementById('ro-com-body2').innerHTML=buildRoComercialFromData(d,p.disc==='1',p.disc_com||'');
     document.getElementById('ro-sat-body').innerHTML=buildRoSATFromData(datosSAT);
   }
+}
+
+function buildRoComercial(){
+  var d=window._datosComercial||{};
+  var disc=document.getElementById('disclaimer-check');
+  return buildRoComercialFromData({
+    'c-nombre':v('c-nombre'),'c-empresa':v('c-empresa'),'c-tel':v('c-tel'),'c-email':v('c-email'),
+    'cl-empresa':v('cl-empresa'),'cl-dir':v('cl-dir'),'cl-tel':v('cl-tel'),'cl-email':v('cl-email'),
+    'eq-acc':v('eq-acc'),'eq-oracle':v('eq-oracle'),'eq-siebel':v('eq-siebel'),
+    'eq-modelo':v('eq-modelo'),'eq-ctrl':v('eq-ctrl'),
+    'eq-sw1':v('eq-sw1'),'eq-sw2':v('eq-sw2'),'eq-contrato-ticket':v('eq-contrato-ticket'),'eq-sw3':v('eq-sw3'),
+    'contador':v('contador'),'disclaimer-comentario':v('disclaimer-comentario')
+  },disc&&disc.checked,v('disclaimer-comentario'));
 }
 
 function buildRoComercialFromData(d,disc,discCom){
@@ -463,6 +424,37 @@ function buildRoComercialFromData(d,disc,discCom){
     '<div style="height:8px"></div>'+
     rrow('Conformidad cliente',disc?'Sí, conforme':'Pendiente de confirmar')+
     (discCom&&discCom!=='—'?rrow('Comentarios',discCom):'');
+}
+
+function buildRoSAT(){
+  var items=[
+    {id:'chk0',icon:'🔄',txt:'Impresora y controlador actualizados a la última versión'},
+    {id:'chk1',icon:'🌐',txt:'Impresora y controlador conectados a red'},
+    {id:'chk2',icon:'🔗',txt:'Conexión remota habilitada'},
+    {id:'chk3',icon:'📐',txt:'Registro comprobado con ±1 mm de tolerancia desde todas las bandejas de producción'},
+    {id:'chk4',icon:'📡',txt:'Conexión @Remote / TF Advisor activada con petición de tóner'},
+    {id:'chk5',icon:'🎯',txt:'Calidad con DQV superada'},
+    {id:'chk6',icon:'📎',txt:'Máxima capacidad grapador / plegador comprobadas'},
+    {id:'chk7',icon:'🎨',txt:'Unidades de 5º color activadas y comprobadas'},
+    {id:'chk8',icon:'🎓',txt:'Formación cambio de 5º color realizada'}
+  ];
+  var completadas=0;
+  var chkStr='';
+  var filas=items.map(function(item){
+    var el=document.getElementById(item.id);
+    var done=el&&el.checked;
+    if(done) completadas++;
+    chkStr+=(done?'1':'0');
+    return '<div class="rrow"><span>'+(done?'✅':'⬜')+' '+item.icon+' '+item.txt+'</span><span style="color:'+(done?'#3b6d11':'#a32d2d')+';">'+(done?'Realizado':'Pendiente')+'</span></div>';
+  }).join('');
+  window._chkStr=chkStr;
+  return rrow('Técnico',v('tec-nombre'))+rrow('Empresa',v('tec-empresa'))+rrow('Teléfono',v('tec-tel'))+rrow('E-mail',v('tec-email'))+
+    '<div style="height:8px"></div>'+
+    '<div style="font-size:11px;color:#5f5e5a;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:6px;font-weight:500">Acciones ('+completadas+'/9 realizadas)</div>'+
+    filas+
+    '<div style="height:8px"></div>'+
+    rrow('IP Fiery',v('sat-ip-fiery'))+rrow('IP Máquina',v('sat-ip-maq'))+
+    (v('tec-comentario')!=='—'?rrow('Comentarios',v('tec-comentario')):'');
 }
 
 function buildRoSATFromData(d){
@@ -484,6 +476,38 @@ function buildRoSATFromData(d){
     (d['tec-comentario']&&d['tec-comentario']!=='—'?rrow('Comentarios',d['tec-comentario']):'');
 }
 
+function buildSATUrl(){
+  var URL_FORMULARIO='https://julianheranz.github.io/ricoh-checklist/';
+  var params={
+    paso:'SAT',
+    c_nombre:v('c-nombre'),c_empresa:v('c-empresa'),c_tel:v('c-tel'),c_email:v('c-email'),
+    cl_empresa:v('cl-empresa'),cl_dir:v('cl-dir'),cl_tel:v('cl-tel'),cl_email:v('cl-email'),
+    eq_acc:v('eq-acc'),eq_oracle:v('eq-oracle'),eq_siebel:v('eq-siebel'),
+    eq_modelo:v('eq-modelo'),eq_ctrl:v('eq-ctrl'),
+    eq_sw1:v('eq-sw1'),eq_sw2:v('eq-sw2'),eq_ticket:v('eq-contrato-ticket'),eq_sw3:v('eq-sw3'),
+    contador:v('contador'),
+    disc:document.getElementById('disclaimer-check').checked?'1':'0',
+    disc_com:v('disclaimer-comentario')
+  };
+  var qs=Object.keys(params).map(function(k){return encodeURIComponent(k)+'='+encodeURIComponent(params[k]);}).join('&');
+  return URL_FORMULARIO+'?'+qs;
+}
+
+function buildFormadorUrl(satUrl){
+  var URL_FORMULARIO='https://julianheranz.github.io/ricoh-checklist/';
+  var chkStr=window._chkStr||'000000000';
+  var extra='&paso=FORMADOR'+
+    '&tec_nombre='+encodeURIComponent(v('tec-nombre'))+
+    '&tec_empresa='+encodeURIComponent(v('tec-empresa'))+
+    '&tec_tel='+encodeURIComponent(v('tec-tel'))+
+    '&tec_email='+encodeURIComponent(v('tec-email'))+
+    '&ip_fiery='+encodeURIComponent(v('sat-ip-fiery'))+
+    '&ip_maq='+encodeURIComponent(v('sat-ip-maq'))+
+    '&tec_com='+encodeURIComponent(v('tec-comentario'))+
+    '&chks='+chkStr;
+  return satUrl+extra;
+}
+
 function enviarASAT(){
   var urlSAT=buildSATUrl();
   var asunto=encodeURIComponent('Ricoh Checklist e-Training — Acción requerida: Servicio Técnico');
@@ -499,8 +523,9 @@ function enviarASAT(){
 }
 
 function enviarAFormador(){
-  var urlSAT=buildSATUrl();
-  var urlFormador=buildFormadorUrl(urlSAT);
+  var satUrl=buildSATUrl();
+  buildRoSAT();
+  var urlFormador=buildFormadorUrl(satUrl);
   var asunto=encodeURIComponent('Ricoh Checklist e-Training — Acción requerida: Formador HW/SW');
   var cuerpo=encodeURIComponent('Estimado/a equipo de Formación HW/SW,\n\nEl Servicio Técnico ('+v('tec-nombre')+') ha completado su parte del Checklist e-Training para el siguiente cliente y equipo:\n\n  Cliente: '+v('cl-empresa')+'\n  Modelo: '+v('eq-modelo')+'\n\nPor favor, accede al siguiente enlace para cumplimentar la sección correspondiente al Formador HW/SW:\n\n  '+urlFormador+'\n\nGracias.\n');
   window.location.href='mailto:RES_PREVENTA_RGC@ricoh.es?subject='+asunto+'&body='+cuerpo;
@@ -514,19 +539,53 @@ function enviarAFormador(){
   },500);
 }
 
-window.onload=function(){cargarDesdeURL();};
+function buildResumenUrl(){
+  var URL_FORMULARIO='https://julianheranz.github.io/ricoh-checklist/';
+  var p=getParams();
+  var params={
+    paso:'RESUMEN',
+    c_nombre:p.c_nombre||v('c-nombre'),c_empresa:p.c_empresa||v('c-empresa'),
+    c_tel:p.c_tel||v('c-tel'),c_email:p.c_email||v('c-email'),
+    cl_empresa:p.cl_empresa||v('cl-empresa'),cl_dir:p.cl_dir||v('cl-dir'),
+    cl_tel:p.cl_tel||v('cl-tel'),cl_email:p.cl_email||v('cl-email'),
+    eq_acc:p.eq_acc||v('eq-acc'),eq_oracle:p.eq_oracle||v('eq-oracle'),
+    eq_siebel:p.eq_siebel||v('eq-siebel'),eq_modelo:p.eq_modelo||v('eq-modelo'),
+    eq_ctrl:p.eq_ctrl||v('eq-ctrl'),eq_sw1:p.eq_sw1||v('eq-sw1'),
+    eq_sw2:p.eq_sw2||v('eq-sw2'),eq_ticket:p.eq_ticket||v('eq-contrato-ticket'),
+    eq_sw3:p.eq_sw3||v('eq-sw3'),contador:p.contador||v('contador'),
+    disc:p.disc||(document.getElementById('disclaimer-check')&&document.getElementById('disclaimer-check').checked?'1':'0'),
+    disc_com:p.disc_com||v('disclaimer-comentario'),
+    tec_nombre:p.tec_nombre||v('tec-nombre'),tec_empresa:p.tec_empresa||v('tec-empresa'),
+    tec_tel:p.tec_tel||v('tec-tel'),tec_email:p.tec_email||v('tec-email'),
+    ip_fiery:p.ip_fiery||v('sat-ip-fiery'),ip_maq:p.ip_maq||v('sat-ip-maq'),
+    tec_com:p.tec_com||v('tec-comentario'),chks:p.chks||window._chkStr||'000000000',
+    frm_nombre:v('frm-nombre'),frm_tel:v('frm-tel'),frm_email:v('frm-email'),
+    adm_nombre:v('adm-nombre'),adm_tel:v('adm-tel'),adm_email:v('adm-email'),
+    usr_nombre:v('usr-nombre'),usr_tel:v('usr-tel'),usr_email:v('usr-email')
+  };
+  var qs=Object.keys(params).map(function(k){return encodeURIComponent(k)+'='+encodeURIComponent(params[k]);}).join('&');
+  return URL_FORMULARIO+'?'+qs;
+}
 
 function cerrarExpediente(){
-  var asunto=encodeURIComponent('Ricoh Checklist e-Training — Alta en Ricoh Ticket: '+v('cl-empresa'));
+  var p=getParams();
+  var cliente=p.cl_empresa||v('cl-empresa');
+  var modelo=p.eq_modelo||v('eq-modelo');
+  var comercial=p.c_nombre||v('c-nombre');
+  var tecnico=p.tec_nombre||v('tec-nombre');
+  var urlResumen=buildResumenUrl();
+  var asunto=encodeURIComponent('Ricoh Checklist e-Training — Alta en Ricoh Ticket: '+cliente);
   var cuerpo=encodeURIComponent(
     'Estimado/a equipo,\n\n'+
     'Se solicita alta en Ricoh Ticket para el siguiente cliente:\n\n'+
-    '  Nombre de cliente: '+v('cl-empresa')+'\n'+
-    '  Modelo de máquina: '+v('eq-modelo')+'\n'+
-    '  Nombre comercial responsable: '+v('c-nombre')+'\n'+
-    '  Nombre técnico instalador: '+v('tec-nombre')+'\n'+
+    '  Nombre de cliente: '+cliente+'\n'+
+    '  Modelo de máquina: '+modelo+'\n'+
+    '  Nombre comercial responsable: '+comercial+'\n'+
+    '  Nombre técnico instalador: '+tecnico+'\n'+
     '  Nombre formador: '+v('frm-nombre')+'\n'+
-    '  Comentarios: '+(v('tec-comentario')!=='—'?v('tec-comentario'):'Sin comentarios')+'\n\n'+
+    '  Comentarios: '+(p.tec_com&&p.tec_com!=='—'?p.tec_com:(v('tec-comentario')!=='—'?v('tec-comentario'):'Sin comentarios'))+'\n\n'+
+    '📋 Accede al resumen completo del expediente en el siguiente enlace:\n\n'+
+    '  '+urlResumen+'\n\n'+
     'Gracias.\n'
   );
   var dest='carlos.casado@ricoh.es;carlos.cano@ricoh.es;raquel.depaco@ricoh.es';
